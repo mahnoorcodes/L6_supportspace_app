@@ -1,20 +1,24 @@
 import React from 'react';
-import { ImageBackground, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, Image} from 'react-native';
 
 function WelcomeScreen(props) {
     return (
-        <ImageBackground 
-            style={styles.background}
-            source={require('../assets/logo.png')}
-        > 
-        </ImageBackground>   
+        <View style={styles.background}>
+            <Image 
+            source={require('../assets/logo.png')} 
+            style={{width: 300, height: 300}}
+            />
+            <Text style={{fontSize:20, color:'#D8B4E2', fontFamily:'Helvetica', fontWeight:'bold'}}> Support Space </Text>
+        </View>
     );
 }
 const styles = StyleSheet.create({
     background:{
-        backgroundColor: '#A8DADC' ,
         flex:1,
-    },
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center",
+    }
 });
 
 export default WelcomeScreen;

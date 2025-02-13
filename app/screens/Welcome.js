@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         fontSize:20, 
         fontFamily:'Helvetica', 
         fontWeight:'bold',
-        color: '#000'
+        color: '#4A4A4A'
     },
     buttonGuest:{
         backgroundColor:'black', 

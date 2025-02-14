@@ -1,13 +1,18 @@
 import React from 'react';
-import { SafeAreaView,Text, StyleSheet} from 'react-native';
+import { SafeAreaView,Text, StyleSheet, Button} from 'react-native';
 
-function Home(props) {
+const Home = ({ navigation, user, isGuest }) => {
     return (
-        <SafeAreaView style={styles.background}>
-            <Text>Home</Text>
-        </SafeAreaView>
+      <SafeAreaView style={styles.container}>
+        {user ? (
+          <Text style={styles.text}>Welcome, {user.email}</Text>
+        ) : (
+          <Text style={styles.text}>Welcome, Guest</Text>
+        )}
+        <Button title="Go to Settings" onPress={() => navigation.navigate('Settings')} />
+      </SafeAreaView>
     );
-}
+  };
 
 const styles = StyleSheet.create({
     background:{

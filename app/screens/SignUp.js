@@ -1,17 +1,18 @@
 import React, {useState} from 'react';
-import { View, Text, StyleSheet, TextInput, Button, ScrollView, Alert, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ImageBackground } from 'react-native';
 import {createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const SignUp = ({ navigation }) => {
+const SignUp = ({ navigation, setUser }) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
   
     const handleSignUp = async () => {
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword (auth, email, password);
+        setUser(userCredential.user);
         Alert.alert('Success', 'User account created successfully');
         navigation.navigate('Home');
       } catch (error) {
@@ -54,9 +55,9 @@ const SignUp = ({ navigation }) => {
                             secureTextEntry
                         />
                     </View>
-                    <View style={styles.buttonContainer}>
-                    <Button title="Sign Up" onPress={handleSignUp} color="#3498db" />
-                    </View>
+                    <TouchableOpacity style={styles.buttonContainer} onPress={handleSignUp}>
+                        <Text style={styles.buttonSignup}>Sign Up</Text>
+                    </TouchableOpacity>
                     <View style={styles.bottomContainer}>
                     <Text style={styles.toggleText} onPress={() => navigation.navigate('Login')}>
                         Already have an account? Log in
@@ -97,7 +98,19 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     buttonContainer: {
+        backgroundColor: '#ffd1dc', 
+        paddingVertical: 15,
+        paddingHorizontal: 15,
+        borderRadius: 20,
+        marginBottom: 20,
         marginVertical: 16,
+    },
+    buttonSignup:{
+        fontSize:16, 
+        fontFamily:'Helvetica', 
+        fontWeight:'bold',
+        color: '#4A4A4A',
+        textAlign: 'center',
     },
     bottomContainer: {
         marginTop: 16,

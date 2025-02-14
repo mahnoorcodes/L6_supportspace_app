@@ -1,9 +1,14 @@
-import React from 'react';
-import { SafeAreaView, Text, StyleSheet, Image, TouchableOpacity, } from 'react-native';
+import React, {useState} from 'react';
+import { SafeAreaView, Text, StyleSheet, Image, TouchableOpacity,Alert} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-function Welcome(props) {
-    const navigation = useNavigation();
+const Welcome = ({ navigation, setUser, setIsGuest }) => {
+    const handleContinueAsGuest = () => {
+      setUser(null);
+      setIsGuest(true); 
+      Alert.alert("Guest Access", "You are continuing as a guest.");
+      navigation.navigate("Home");
+    };
 
     return (
         <SafeAreaView style={styles.background}>
@@ -19,13 +24,13 @@ function Welcome(props) {
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonGuest} onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity style={styles.buttonGuest} onPress={handleContinueAsGuest}>
                     <Text style={styles.buttonTextGuest}>Continue as Guest</Text>
                 </TouchableOpacity>
             </SafeAreaView>
         </SafeAreaView>
     );
-}
+};
 
 const styles = StyleSheet.create({
     background:{
@@ -72,7 +77,7 @@ const styles = StyleSheet.create({
         width:250,
         padding:10,
         borderRadius:30,
-        marginVertical:20
+        marginVertical:20,
     },
     buttonTextGuest:{
         fontSize:20, 

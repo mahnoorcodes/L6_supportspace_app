@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, ScrollView, Alert, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ImageBackground } from 'react-native';
 import {signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, setUser }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
   
     const handleLogin = async () => {
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        setUser(userCredential.user);
         Alert.alert('Success', 'Logged in succesfully');
         navigation.navigate('Home');
       } catch (error) {
@@ -44,9 +45,9 @@ const Login = ({ navigation }) => {
                                 secureTextEntry
                             />
                         </View>
-                        <View style={styles.buttonContainer}>
-                        <Button title="Login" onPress={handleLogin} color="#3498db" />
-                        </View>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={handleLogin}>
+                            <Text style={styles.buttonLogin}>Login</Text>
+                        </TouchableOpacity>
                         <View style={styles.bottomContainer}>
                         <Text style={styles.toggleText} onPress={() => navigation.navigate('SignUp')}>
                             Don't have an account? Sign up
@@ -85,7 +86,19 @@ const styles = StyleSheet.create({
         paddingLeft: 50,
         marginBottom: 20,
     },
+    buttonLogin:{
+        fontSize:16, 
+        fontFamily:'Helvetica', 
+        fontWeight:'bold',
+        color: '#4A4A4A',
+        textAlign: 'center',
+    },
     buttonContainer: {
+        backgroundColor: '#ffd1dc', 
+        paddingVertical: 15,
+        paddingHorizontal: 15,
+        borderRadius: 20,
+        marginBottom: 20,
         marginVertical: 16,
     },
     bottomContainer: {

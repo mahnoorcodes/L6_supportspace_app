@@ -3,8 +3,9 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert,
 import {signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Home from './tabs/Home';
 
-const Login = ({ navigation, setUser }) => {
+const Login = ({ navigation, setUser, setIsGuest }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
   
@@ -13,7 +14,7 @@ const Login = ({ navigation, setUser }) => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         setUser(userCredential.user);
         Alert.alert('Success', 'Logged in succesfully');
-        navigation.navigate('Home');
+        navigation.navigate("HomeTabs");
       } catch (error) {
         console.error('Error logging in: ', error.message);
         Alert.alert('Error', error.message);

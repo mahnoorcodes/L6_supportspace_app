@@ -5,7 +5,7 @@ import Welcome from './screens/Welcome';
 import SplashScreen from './screens/SplashScreen';
 import SignUp from './screens/SignUp'; 
 import Login from './screens/Login';
-import Home from './screens/Home';
+import Home from './screens/tabs/Home';
 import AppNavigator from './AppNavigator'; 
 
 const App = () => {

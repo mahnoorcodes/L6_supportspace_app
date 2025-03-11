@@ -7,7 +7,7 @@ const Welcome = ({ navigation, setUser, setIsGuest }) => {
       setUser(null);
       setIsGuest(true); 
       Alert.alert("Guest Access", "You are continuing as a guest.");
-      navigation.navigate("Home");
+      navigation.navigate("HomeTabs");
     };
 
     return (

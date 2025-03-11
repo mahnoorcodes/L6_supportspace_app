@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { SafeAreaView,Text, StyleSheet, BackHandler, TouchableOpacity, Alert, ImageBackground, Dimensions} from 'react-native';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -6,32 +6,6 @@ import { useNavigation } from '@react-navigation/native';
 const Home = ({ user, isGuest }) => {
   const navigation = useNavigation();
   const screenWidth = Dimensions.get('window').width; 
-
-  const handleBackPress = () => {
-    Alert.alert(
-      'Exit App',
-      'Are you sure you want to exit?',
-      [
-        {
-          text: 'Yes',
-          onPress: () => BackHandler.exitApp(), 
-        },
-        {
-          text: 'Cancel',
-          onPress: () => null, 
-          style: 'cancel',
-        },
-
-      ],
-      { cancelable: false } 
-    );
-    return true; 
-  };
-
-  React.useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-    return () => backHandler.remove(); 
-  }, []);
 
   const handleMoodPress = (mood) => {
     console.log(`Mood selected: ${mood}`);
@@ -41,7 +15,7 @@ const Home = ({ user, isGuest }) => {
       <ImageBackground source={require('../../assets/bg.png')} style={styles.backgroundImage} resizeMode='cover'>     
         <SafeAreaView style={styles.container}>
           <SafeAreaView style={styles.headerContainer}>
-          <Entypo name="chevron-left" size={24} color="black" onPress={handleBackPress} />
+          <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.goBack()} />
           <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
             <Text style={styles.headerText}>Support Space</Text>
           </SafeAreaView>

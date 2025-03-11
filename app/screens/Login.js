@@ -4,10 +4,12 @@ import {signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Home from './tabs/Home';
+import { Entypo} from '@expo/vector-icons';
 
 const Login = ({ navigation, setUser, setIsGuest }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   
     const handleLogin = async () => {
       try {
@@ -24,7 +26,8 @@ const Login = ({ navigation, setUser, setIsGuest }) => {
     return (
             <ImageBackground source={require('../assets/bg.png')} style={styles.backgroundImage}>
                 <ScrollView contentContainerStyle={styles.container}>
-                    <View>
+                <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.goBack()} style={styles.backButton} />
+                    <View>            
                         <Text style={styles.login}>Login</Text>                        
                         <View style={styles.inputContainer}>
                             <Icon name="email" size={20} color="#aaa" style={styles.icon} />
@@ -43,8 +46,13 @@ const Login = ({ navigation, setUser, setIsGuest }) => {
                                 value={password}
                                 onChangeText={setPassword}
                                 placeholder="Password"
-                                secureTextEntry
+                                secureTextEntry={!isPasswordVisible}
                             />
+                            <TouchableOpacity
+                                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                                    style={styles.icon}>
+                                <Entypo name={isPasswordVisible ? 'eye' : 'eye-with-line'} size={24} color="gray" />  
+                            </TouchableOpacity>  
                         </View>
                         <TouchableOpacity style={styles.buttonContainer} onPress={handleLogin}>
                             <Text style={styles.buttonLogin}>Login</Text>
@@ -127,6 +135,12 @@ const styles = StyleSheet.create({
         height: 60,
         fontSize: 16,
     },
+    backButton:{
+        position: 'absolute',
+        top: 50,
+        left: 20,
+        padding:10,
+    }
 });
 
 export default Login;

@@ -14,6 +14,7 @@ import Moods from './screens/Moods';
 import Journal from './screens/Journal';
 import Meditate from './screens/Meditate';
 import Mindfulness from './screens/Mindfulness';
+import NewJournalEntry from './screens/NewJournalEntry';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -87,7 +88,16 @@ const AppNavigator = () => {
       <Stack.Screen name="HomeTabs">
           {(props) => <HomeTabs {...props} user={user} isGuest={isGuest} />}
         </Stack.Screen>
+
+      {/* Additional Screens */}
+      <Stack.Screen name="Journal" component={Journal} />
+      <Stack.Screen name="Meditate" component={Meditate} />
+      <Stack.Screen name="Mindfulness" component={Mindfulness} />
+      <Stack.Screen name="Moods" component={Moods} />
+      <Stack.Screen name="NewJournalEntry" component={NewJournalEntry} />
+
       </Stack.Navigator>
+      
   );
 };
 

@@ -3,18 +3,20 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert,
 import {createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 
 const SignUp = ({ navigation, setUser }) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   
     const handleSignUp = async () => {
       try {
         const userCredential = await createUserWithEmailAndPassword (auth, email, password);
         setUser(userCredential.user);
         Alert.alert('Success', 'User account created successfully');
-        navigation.navigate('Home');
+        navigation.navigate('HomeTabs');
       } catch (error) {
         console.error('Error creating user:', error.message);
         Alert.alert('Error', error.message);
@@ -24,6 +26,7 @@ const SignUp = ({ navigation, setUser }) => {
     return (
         <ImageBackground source={require('../assets/bg.png')} style={styles.backgroundImage}>
             <ScrollView contentContainerStyle={styles.container}>
+            <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.goBack()} style={styles.backButton} />
                 <View>
                     <Text style={styles.signUp}>Sign Up</Text>
                     <View style={styles.inputContainer}>
@@ -52,8 +55,13 @@ const SignUp = ({ navigation, setUser }) => {
                             value={password}
                             onChangeText={setPassword}
                             placeholder="Password"
-                            secureTextEntry
+                            secureTextEntry={!isPasswordVisible}
                         />
+                        <TouchableOpacity
+                                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                                style={styles.icon}>
+                            <Entypo name={isPasswordVisible ? 'eye' : 'eye-with-line'} size={24} color="gray" />  
+                        </TouchableOpacity>                      
                     </View>
                     <TouchableOpacity style={styles.buttonContainer} onPress={handleSignUp}>
                         <Text style={styles.buttonSignup}>Sign Up</Text>
@@ -137,7 +145,12 @@ const styles = StyleSheet.create({
         height: 60,
         fontSize: 16,
     },
-    
+    backButton:{
+        position: 'absolute',
+        top: 50,
+        left: 20,
+        padding:10,
+    }
 });
 
 export default SignUp;

@@ -1,42 +1,88 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import {Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView , Alert} from 'react-native';
 import { Ionicons,Entypo } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { saveJournalEntry, setupDatabase , updateJournalEntry, deleteJournalEntry} from '../Database';
 
 const NewJournalEntry = () => {
   const navigation = useNavigation();
-  const [title, setTitle] = useState('');
-  const [entry, setEntry] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [title, setTitle] = useState(existingEntry ? existingEntry.title : '');  
+  const [entry, setEntry] = useState(existingEntry ? existingEntry.entry : '');  
+  const [date, setDate] = useState(existingEntry?.date || '');
+  const [time, setTime] = useState(existingEntry?.time || '');
+
+  const route = useRoute();
+  const { existingEntry, refreshEntries } = route.params || {}; 
+  useEffect(() => {
+    if (existingEntry) {
+      console.log('Existing Entry:', existingEntry);  // Log to inspect the data
+      setTitle(existingEntry.title);
+      setEntry(existingEntry.entry);
+      setDate(existingEntry.date);
+      setTime(existingEntry.time);
+    }
+  }, [existingEntry]);
 
   useEffect(() => {
-    const updateDateTime = () => {
-      const now = new Date();
-      const formattedDate = now.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      });
-      const formattedTime = now.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-
-      setDate(formattedDate);
-      setTime(formattedTime);
-    };
-
-    updateDateTime(); 
-    const interval = setInterval(updateDateTime, 1000); // Update every second
-
-    return () => clearInterval(interval); // Cleanup
+    setupDatabase();
+    const currentDate = new Date();
+    setDate(currentDate.toLocaleDateString('en-GB'));
+    setTime(currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   }, []);
 
-  const handleSave = () => {
-    console.log('Saving:', { title, entry });
-    // You can add API call or AsyncStorage save logic here
+  const handleSave = async () => {
+    if (!title || !entry) {
+      Alert.alert("Error", "Title and entry cannot be empty.");
+      return; 
+    }
+    
+    try {
+      const currentDate = new Date().toLocaleDateString('en-GB');
+      const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (existingEntry) {
+        await updateJournalEntry(existingEntry.id, title, entry, existingEntry.date, existingEntry.time);
+        Alert.alert("Success", "Journal entry updated!");
+      }else{
+        await saveJournalEntry(title, entry, currentDate, currentTime);
+        Alert.alert("Success", "Journal entry saved!");
+      }
+
+      navigation.navigate('Journal');
+    } 
+    catch (error) {
+      Alert.alert("Error", "There was an issue saving your entry.");
+      console.error("Error saving journal entry:", error);
+    }
   };
+  
+  useEffect(() => {
+    if (existingEntry) {
+      setDate(existingEntry.date); 
+      setTime(existingEntry.time); 
+    } else {
+      const updateDateTime = () => {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        });
+        const formattedTime = now.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+  
+        setDate(formattedDate);
+        setTime(formattedTime);
+      };
+  
+      updateDateTime(); 
+      const interval = setInterval(updateDateTime, 1000);  
+      return () => clearInterval(interval); 
+    }
+  }, [existingEntry]); 
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -72,9 +118,33 @@ const NewJournalEntry = () => {
         </TouchableOpacity>
       </SafeAreaView>
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Save</Text>
+      <TouchableOpacity style={styles.twoButtons} onPress={() => {handleSave(); navigation.navigate('NewJournalEntry');}}>
+        <Text style={styles.twoButtonsText}>Save</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.twoButtons} onPress={() => {
+        Alert.alert("Delete Entry","Are you sure you want to delete this entry?",[
+            {text: "Cancel",style: "cancel"},
+            { text: "Yes", onPress: async () => {
+              try {
+                if (existingEntry) {
+                  await deleteJournalEntry(existingEntry.id); 
+                }
+                setTitle('');setEntry('');setDate('');setTime('');
+                Alert.alert("Success", "Entry deleted."); 
+                navigation.navigate('Journal');
+              } catch (error) {
+                Alert.alert("Error", "There was an issue deleting the entry.");
+                console.error("Error deleting journal entry:", error);
+              }
+            }
+          }
+        ]);
+      }}>
+
+  <Text style={styles.twoButtonsText}>Delete All Data</Text>
+  
+</TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -150,14 +220,14 @@ const styles = StyleSheet.create({
   micButton: {
     padding: 10,
   },
-  saveButton: {
+  twoButtons: {
     backgroundColor: 'black',
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',
     marginTop: 20,
   },
-  saveButtonText: {
+  twoButtonsText: {
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',

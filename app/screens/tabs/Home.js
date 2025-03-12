@@ -40,7 +40,7 @@ const Home = ({ user, isGuest }) => {
             <Text style={styles.header}>Wellness Tools</Text>
             <SafeAreaView style={styles.toolsContainer}>
               <TouchableOpacity style={styles.toolButton} onPress={() => navigation.navigate("Journal")}>
-                <FontAwesome5 name="book" size={20} color="black" />
+                <FontAwesome5 name="book" size={20}/>
                 <Text style={styles.toolButtonText}>Journal</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.toolButton} onPress={() => navigation.navigate('Meditate')}>

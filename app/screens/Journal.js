@@ -2,47 +2,64 @@ import React from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, SafeAreaView } from 'react-native';
 import { Entypo, AntDesign, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { getJournalEntry, saveJournalEntry } from '../Database';
+import { useEffect, useState } from 'react';
 
 const JournalScreen = () => {
   const navigation = useNavigation();
+  const [journalEntries,setJournalEntries] = useState([]);
+  
+  const loadEntries = async () => {
+    try {
+      const data = await getJournalEntry(); 
+      if (data && data.length > 0) {
+        console.log("Fetched journal entries:", data);
+        const validEntries = data.map((item, index) => ({
+          ...item,
+          id: item.id ? item.id.toString() : index.toString(), 
+        }));
+        setJournalEntries(validEntries);
+      } else {
+        console.log("No journal entries found.");
+        setJournalEntries([]); 
+      }
+    } catch (error) {
+      console.error("Error loading journal entries:", error);
+    }
+  };
 
-  const journalEntries = [
-    { id: '1', date: 'Today' },
-    { id: '2', date: 'Yesterday' },
-    { id: '3', date: '28 February 2025' },
-  ];
+  useEffect(() => {
+    loadEntries();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <SafeAreaView style={styles.headerContainer}>
-      <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.goBack()} />
+      <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("HomeTabs")} />
         <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
           <Text style={styles.headerText}>My Journal</Text>
         </SafeAreaView>
       </SafeAreaView>
 
-      {/* Start new entry */}
       <SafeAreaView style={styles.contentContainer}>
         <TouchableOpacity style={styles.newEntryButton} onPress={() => navigation.navigate("NewJournalEntry")}>
           <Text style={styles.newEntryText}>Start a New Entry</Text>
           <AntDesign name="pluscircleo" size={20} color="black" />
         </TouchableOpacity>
 
-
-      {/* past journal entries */}
-      <FlatList
-        data={journalEntries}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.entryContainer}>
-            <View style={styles.entryIcon} />
-            <Text style={styles.entryText}>{item.date}</Text>
-            <TouchableOpacity onPress={() => console.log("Edit Entry")}>
-              <FontAwesome name="pencil" size={18} color="black" />
-            </TouchableOpacity>
-          </View>
-        )}
-      /> 
+        <FlatList
+          data={journalEntries}
+          keyExtractor={(item) => item.id.toString()}  
+          renderItem={({ item }) => (
+            <View style={styles.entryContainer}>
+              <View style={styles.entryIcon} />
+              <Text style={styles.entryText}>{item.date} | {item.title}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('NewJournalEntry', { existingEntry: item})}>
+                <FontAwesome name="pencil" size={18} color="black" />
+              </TouchableOpacity>
+            </View>
+          )}
+        />
       </SafeAreaView>
     </SafeAreaView>
   );

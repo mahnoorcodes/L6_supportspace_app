@@ -7,6 +7,7 @@ import SignUp from './screens/SignUp';
 import Login from './screens/Login';
 import Home from './screens/tabs/Home';
 import AppNavigator from './AppNavigator'; 
+import { setupDatabase } from './Database';
 
 const App = () => {
   const [user, setUser] = useState(null); 
@@ -30,4 +31,4 @@ const App = () => {
   );
 };
 
-export default App; 
+export default App;

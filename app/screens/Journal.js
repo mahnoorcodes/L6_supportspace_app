@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, SafeAreaView, ImageBackground } from 'react-native';
 import { Entypo, AntDesign, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { getJournalEntry, saveJournalEntry } from '../Database';
 import { useEffect, useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 const JournalScreen = () => {
   const navigation = useNavigation();
@@ -33,6 +35,12 @@ const JournalScreen = () => {
   }, []);
 
   return (
+    <LinearGradient
+      colors={['pink', '#B5FFFC','#FFDDD2','lightblue']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}>
+
     <SafeAreaView style={styles.container}>
       <SafeAreaView style={styles.headerContainer}>
       <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("HomeTabs")} />
@@ -46,38 +54,45 @@ const JournalScreen = () => {
           <Text style={styles.newEntryText}>Start a New Entry</Text>
           <AntDesign name="pluscircleo" size={20} color="black" />
         </TouchableOpacity>
+        <Text style={styles.header}>Journal Entries</Text>
 
         <FlatList
           data={journalEntries}
           keyExtractor={(item) => item.id.toString()}  
           renderItem={({ item }) => (
-            <View style={styles.entryContainer}>
-              <View style={styles.entryIcon} />
-              <Text style={styles.entryText}>{item.date} | {item.title}</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('NewJournalEntry', { existingEntry: item})}>
-                <FontAwesome name="pencil" size={18} color="black" />
-              </TouchableOpacity>
-            </View>
+
+              <View style={styles.entryContainer}>
+                <View style={styles.entryIcon} />
+                <Text style={styles.entryText}>{item.date} | {item.title}</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('NewJournalEntry', { existingEntry: item})}>
+                  <FontAwesome name="pencil" size={18} color="black" />
+                </TouchableOpacity>
+              </View>
           )}
         />
       </SafeAreaView>
     </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1, 
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    padding: 20,
   },
   header: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginVertical: 20,
+    marginVertical: 10,
   },
   headerContainer: {
-    position: 'absolute',  // Ensures it sticks to the top
+    position: 'absolute',  
     top: 0,
     left: 0,
     right: 0,

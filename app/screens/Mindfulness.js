@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 const Mindfulness = () => {
   const navigation = useNavigation();
   const [apiResponse, setApiResponse] = useState('');
+  const [textColor, setTextColor] = useState('#FF69B4');
 
   const fetchData = async () => {
     const requestOptions = {
@@ -32,6 +33,17 @@ const Mindfulness = () => {
     fetchData();
   }, []);
 
+  const getRandomColor = () => {
+    const colors = ['#FF69B4', '#FFDDD2', '#D8B4E2', '#B5E48C', '#FFD700', '#00CED1', '#A8DADC'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+  
+  useEffect(() => {
+    setTextColor(getRandomColor());
+    fetchData();
+  }, []);
+  
+  // Mindful tasks from https://www.mayoclinic.org/healthy-lifestyle/consumer-health/in-depth/mindfulness-exercises/art-20046356
   const mindfulTasks = [
     {
       id: '1',
@@ -47,6 +59,48 @@ const Mindfulness = () => {
       duration: '10 mins',
       icon: 'walking',
     },
+    {
+      id: '3',
+      title: 'Body Scan Meditation',
+      description: 'Lie on your back and slowly focus on each part of your body from head to toe, observing sensations and emotions.',
+      duration: '15 mins',
+      icon: 'spa',
+    },
+    {
+      id: '4',
+      title: 'Sitting Meditation',
+      description: 'Sit comfortably, focus on your breath, and gently return to your breathing when thoughts arise.',
+      duration: '10 mins',
+      icon: 'chair',
+    },
+    {
+      id: '5',
+      title: 'Walking Meditation',
+      description: 'Walk slowly in a quiet space, paying attention to your balance and body movements with each step.',
+      duration: '10 mins',
+      icon: 'walking',
+    },
+    {
+      id: '6',
+      title: 'Mindful Walking',
+      description: 'Walk slowly and focus on each step and your surroundings',
+      duration: '10 mins',
+      icon: 'walking',
+    },
+    {
+      id: '7',
+      title: 'Gratitude Journaling',
+      description: 'Write down three things you are grateful for today. Reflect on the positive emotions they bring.',
+      duration: '10 mins',
+      icon: 'book',
+    },
+    {
+      id: '8',
+      title: 'Loving-Kindness Meditation',
+      description: 'Sit quietly and silently repeat positive affirmations for yourself and others, such as "May I be happy, may I be healthy."',
+      duration: '10 mins',
+      icon: 'heart',
+    },    
   ];
 
   const renderItem = ({ item }) => (
@@ -61,38 +115,47 @@ const Mindfulness = () => {
   );
 
   return (
+    <LinearGradient
+          colors={['lightyellow', '#B5FFFC','pink','#FFCB77']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.container}>
+
     <SafeAreaView style={styles.container}>
       <SafeAreaView style={styles.headerContainer}>
         <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("HomeTabs")} />
           <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
             <Text style={styles.headerText}>Mindful Practices</Text>
           </SafeAreaView>
+        <FontAwesome5 name="wind" size={24} color="black" />
       </SafeAreaView>
 
       <Text style={styles.sectionTitle}>Positive Affirmations</Text>
-      <Text style={styles.apiText}>{apiResponse || 'Loading...'}</Text>
+
+      <TouchableOpacity onPress={fetchData} style={styles.apiContainer}>
+      <Text style={[styles.apiText, { color: textColor }]}>{apiResponse || 'Loading...'}</Text>
+      </TouchableOpacity>
+
       <Text style={styles.sectionTitle2}>Mindful Tasks</Text>
+
       <FlatList
         data={mindfulTasks}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
       />
     </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    paddingHorizontal: 20,
-    paddingTop: 40,
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: 'center',
   },
   headerContainer: {
     position: 'absolute',  
@@ -116,14 +179,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
-    paddingTop:80,
+    paddingTop:100,
+    paddingLeft: 20, 
+    paddingRight: 20, 
   },
   sectionTitle2: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
     paddingTop:20,
+    paddingLeft: 20, 
+    paddingRight: 20, 
   },
   apiText: {
     fontSize: 28,
@@ -140,6 +206,10 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5, 
   },
+  apiContainer: {
+    padding:20,
+    borderRadius: 10, 
+  },  
   taskCard: {
     backgroundColor: 'white',
     borderRadius: 10,

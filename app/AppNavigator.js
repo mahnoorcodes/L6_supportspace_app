@@ -9,12 +9,12 @@ import Home from './screens/tabs/Home';
 import Login from './screens/Login';
 import SignUp from './screens/SignUp';
 import Settings from './screens/tabs/Settings';
-import Library from './screens/tabs/Library';
 import Moods from './screens/Moods';
-import Journal from './screens/Journal';
+import Journal from './screens/tabs/Journal';
 import Meditate from './screens/Meditate';
 import Mindfulness from './screens/Mindfulness';
 import NewJournalEntry from './screens/NewJournalEntry';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,11 +46,11 @@ const HomeTabs = ({user}) => {
         }}
       />
       <Tab.Screen 
-        name="Library" 
-        component={Library} 
+        name="Journal" 
+        component={Journal} 
         options={{
           tabBarIcon: ({ focused }) => (
-            <Entypo name="book" size={24} color={focused ? "black" : "gray"} />
+            <FontAwesome5 name="book" size={24} color={focused ? "black" : "gray"} />
           ),
         }}
       />

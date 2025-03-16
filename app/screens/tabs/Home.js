@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { SafeAreaView,Text, StyleSheet, BackHandler, TouchableOpacity, Alert, ImageBackground, Dimensions} from 'react-native';
+import { SafeAreaView,Text, StyleSheet, TouchableOpacity, Alert, ImageBackground, Dimensions} from 'react-native';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -15,14 +15,15 @@ const Home = ({ user, isGuest }) => {
       <ImageBackground source={require('../../assets/bg.png')} style={styles.backgroundImage} resizeMode='cover'>     
         <SafeAreaView style={styles.container}>
           <SafeAreaView style={styles.headerContainer}>
-          <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.goBack()} />
+          <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("Welcome")} />
           <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
             <Text style={styles.headerText}>Support Space</Text>
           </SafeAreaView>
+          <FontAwesome5 name="heart" size={24} color="black" />
         </SafeAreaView>
 
           {user ? (
-            <Text style={styles.greeting}>Welcome, {user.email}</Text>
+            <Text style={styles.greeting}>Welcome, {user.displayName}</Text>
           ) : (
             <Text style={styles.greeting}>Welcome, Guest</Text>
           )}
@@ -39,10 +40,6 @@ const Home = ({ user, isGuest }) => {
 
             <Text style={styles.header}>Wellness Tools</Text>
             <SafeAreaView style={styles.toolsContainer}>
-              <TouchableOpacity style={styles.toolButton} onPress={() => navigation.navigate("Journal")}>
-                <FontAwesome5 name="book" size={20}/>
-                <Text style={styles.toolButtonText}>Journal</Text>
-              </TouchableOpacity>
               <TouchableOpacity style={styles.toolButton} onPress={() => navigation.navigate('Meditate')}>
                 <FontAwesome5 name="music" size={20} />
                 <Text style={styles.toolButtonText}>Meditate</Text>
@@ -79,11 +76,11 @@ const Home = ({ user, isGuest }) => {
       fontSize: 22, 
       fontWeight: 'bold', 
       marginBottom: 20,
-      paddingTop: 80,  
+      paddingTop: 100,  
       justifyContent:'center',
     },
     headerContainer: {
-      position: 'absolute',  // Ensures it sticks to the top
+      position: 'absolute', 
       top: 0,
       left: 0,
       right: 0,

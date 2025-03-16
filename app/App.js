@@ -7,7 +7,7 @@ import SignUp from './screens/SignUp';
 import Login from './screens/Login';
 import Home from './screens/tabs/Home';
 import AppNavigator from './AppNavigator'; 
-import { setupDatabase } from './Database';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const App = () => {
   const [user, setUser] = useState(null); 
@@ -18,6 +18,22 @@ const App = () => {
     setTimeout(() => {
       setIsShowSplash(false);
     }, 3000);
+  }, []);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // Fetch username (displayName) or fallback to email
+        const username = firebaseUser.displayName || firebaseUser.email; // if no displayName, use email
+        setUser({ username });
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup the listener when component unmounts
+    return () => unsubscribe();
   }, []);
 
   return (

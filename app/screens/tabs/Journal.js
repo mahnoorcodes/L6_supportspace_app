@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, SafeAreaView, ImageBackground } from 'react-native';
-import { Entypo, AntDesign, FontAwesome } from '@expo/vector-icons';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, SafeAreaView} from 'react-native';
+import { Entypo, AntDesign, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { getJournalEntry, saveJournalEntry } from '../Database';
+import { getJournalEntry, saveJournalEntry } from '../../Database';
 import { useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -36,17 +36,17 @@ const JournalScreen = () => {
 
   return (
     <LinearGradient
-      colors={['pink', '#B5FFFC','#FFDDD2','lightblue']}
+      colors={['lightyellow', '#B5FFFC','pink','#FFCB77']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}>
 
     <SafeAreaView style={styles.container}>
       <SafeAreaView style={styles.headerContainer}>
-      <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("HomeTabs")} />
         <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
           <Text style={styles.headerText}>My Journal</Text>
         </SafeAreaView>
+      <FontAwesome5 name="book" size={24} color="black" />
       </SafeAreaView>
 
       <SafeAreaView style={styles.contentContainer}>
@@ -77,12 +77,6 @@ const JournalScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1, 
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
   container: {
     flex: 1,
   },

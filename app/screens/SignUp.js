@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ImageBackground } from 'react-native';
-import {createUserWithEmailAndPassword } from 'firebase/auth';
+import {createUserWithEmailAndPassword, updateProfile, getAuth } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
@@ -12,16 +12,32 @@ const SignUp = ({ navigation, setUser }) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   
     const handleSignUp = async () => {
+      const auth = getAuth(); 
+      if (!username) {
+        Alert.alert('Error', 'Please provide a username');
+        return;
+      }  
       try {
-        const userCredential = await createUserWithEmailAndPassword (auth, email, password);
-        setUser(userCredential.user);
-        Alert.alert('Success', 'User account created successfully');
-        navigation.navigate('HomeTabs');
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        await updateProfile(user, {
+          displayName: username,  
+        });
+        const updatedUser = getAuth().currentUser;
+        console.log('User after updateProfile:', updatedUser);
+
+        if (updatedUser && updatedUser.displayName) {
+          setUser(updatedUser); 
+          Alert.alert('Success', 'User account created successfully');
+          navigation.navigate('HomeTabs');
+        } else {
+          Alert.alert('Error', 'Display name not set correctly');
+        }
       } catch (error) {
-        console.error('Error creating user:', error.message);
         Alert.alert('Error', error.message);
       }
     };
+ 
 
     return (
         <ImageBackground source={require('../assets/bg.png')} style={styles.backgroundImage}>

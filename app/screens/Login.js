@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ImageBackground } from 'react-native';
-import {signInWithEmailAndPassword } from 'firebase/auth';
+import {signInWithEmailAndPassword, getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Home from './tabs/Home';
@@ -10,7 +10,7 @@ const Login = ({ navigation, setUser, setIsGuest }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  
+
     const handleLogin = async () => {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -22,6 +22,31 @@ const Login = ({ navigation, setUser, setIsGuest }) => {
         Alert.alert('Error', error.message);
       }
     };
+
+    const handlePasswordReset = () => {
+        const auth = getAuth();
+
+        if (!email) {
+          Alert.alert('Please enter your email address');
+          return;
+        }
+        sendPasswordResetEmail(auth, email)
+          .then(() => {
+            Alert.alert('Password reset email sent!', 'Please check your inbox.');
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+
+            if (errorCode === 'auth/invalid-email') {
+              Alert.alert('Invalid email address');
+            } else if (errorCode === 'auth/user-not-found') {
+              Alert.alert('No account found with this email');
+            } else {
+              Alert.alert(errorMessage);
+            }
+          });
+      };
 
     return (
             <ImageBackground source={require('../assets/bg.png')} style={styles.backgroundImage}>
@@ -58,6 +83,9 @@ const Login = ({ navigation, setUser, setIsGuest }) => {
                             <Text style={styles.buttonLogin}>Login</Text>
                         </TouchableOpacity>
                         <View style={styles.bottomContainer}>
+                        <TouchableOpacity style={styles.button} onPress={handlePasswordReset}>
+                            <Text style={styles.toggleText}>Forgot Password?</Text>
+                        </TouchableOpacity>
                         <Text style={styles.toggleText} onPress={() => navigation.navigate('SignUp')}>
                             Don't have an account? Sign up
                         </Text>
@@ -117,6 +145,7 @@ const styles = StyleSheet.create({
     toggleText: {
         color: '#3498db',
         textDecorationLine: 'underline',
+        paddingTop: 10,
     },
     inputContainer: {
         flexDirection: 'row',
@@ -126,6 +155,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         width: 250,
         paddingHorizontal: 10,
+        
     },
     icon: {
         marginRight: 10,

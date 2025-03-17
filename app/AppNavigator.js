@@ -59,7 +59,7 @@ const HomeTabs = ({user}) => {
         component={Settings} 
         options={{
           tabBarIcon: ({ focused }) => (
-            <Entypo name="user" size={24} color={focused ? "black" : "gray"} />
+            <Entypo name="cog" size={24} color={focused ? "black" : "gray"} />
           ),
         }}
       />
@@ -72,32 +72,31 @@ const AppNavigator = () => {
   const [isGuest, setIsGuest] = useState(true);  // Manage guest state
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* Authentication Screens (No Bottom Tabs) */}
-      <Stack.Screen name="Welcome">
-        {(props) => <Welcome {...props} setUser={setUser} setIsGuest={setIsGuest} />}
-      </Stack.Screen>
-      <Stack.Screen name="Login">
-        {(props) => <Login {...props} setUser={setUser} />}
-      </Stack.Screen>
-      <Stack.Screen name="SignUp">
-        {(props) => <SignUp {...props} setUser={setUser} />}
-      </Stack.Screen>
-
-      {/* Main App Screens with Bottom Tabs */}
-      <Stack.Screen name="HomeTabs">
-          {(props) => <HomeTabs {...props} user={user} isGuest={isGuest} />}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {/* Authentication Screens (No Bottom Tabs) */}
+        <Stack.Screen name="Welcome">
+          {(props) => <Welcome {...props} setUser={setUser} setIsGuest={setIsGuest} />}
+        </Stack.Screen>
+        <Stack.Screen name="Login">
+          {(props) => <Login {...props} setUser={setUser} />}
+        </Stack.Screen>
+        <Stack.Screen name="SignUp">
+          {(props) => <SignUp {...props} setUser={setUser} />}
         </Stack.Screen>
 
-      {/* Additional Screens */}
-      <Stack.Screen name="Journal" component={Journal} />
-      <Stack.Screen name="Meditate" component={Meditate} />
-      <Stack.Screen name="Mindfulness" component={Mindfulness} />
-      <Stack.Screen name="Moods" component={Moods} />
-      <Stack.Screen name="NewJournalEntry" component={NewJournalEntry} />
+        {/* Main App Screens with Bottom Tabs */}
+        <Stack.Screen name="HomeTabs">
+            {(props) => <HomeTabs {...props} user={user} isGuest={isGuest} />}
+          </Stack.Screen>
 
-      </Stack.Navigator>
-      
+        {/* Additional Screens */}
+        <Stack.Screen name="Journal" component={Journal} />
+        <Stack.Screen name="Meditate" component={Meditate} />
+        <Stack.Screen name="Mindfulness" component={Mindfulness} />
+        <Stack.Screen name="Moods" component={Moods} />
+        <Stack.Screen name="NewJournalEntry" component={NewJournalEntry} />
+
+        </Stack.Navigator>
   );
 };
 

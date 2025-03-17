@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { SafeAreaView,Text, StyleSheet, TouchableOpacity, Alert, ImageBackground, Dimensions} from 'react-native';
+import { View, SafeAreaView,Text, StyleSheet, TouchableOpacity, Alert, ImageBackground, Dimensions} from 'react-native';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -12,7 +12,7 @@ const Home = ({ user, isGuest }) => {
   };
 
     return (
-      <ImageBackground source={require('../../assets/bg.png')} style={styles.backgroundImage} resizeMode='cover'>     
+      <ImageBackground source={require('../../assets/bg.png')} style={styles.backgroundImage} resizeMode='cover'>    
         <SafeAreaView style={styles.container}>
           <SafeAreaView style={styles.headerContainer}>
           <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("Welcome")} />
@@ -93,8 +93,7 @@ const Home = ({ user, isGuest }) => {
       paddingHorizontal: 20, 
       backgroundColor: '#FFF', 
       zIndex: 100, 
-    },
-    
+    },   
     headerText: {
       fontSize: 24,
       fontWeight: 'bold',
@@ -110,7 +109,7 @@ const Home = ({ user, isGuest }) => {
       marginVertical: 20,
     },
     moodCard: {
-      backgroundColor: '#EAEAEA',
+      backgroundColor: '#FFF',
       padding: 20,
       borderRadius: 15,
       marginBottom: 20,

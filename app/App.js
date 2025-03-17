@@ -24,7 +24,6 @@ const App = () => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        // Fetch username (displayName) or fallback to email
         const username = firebaseUser.displayName || firebaseUser.email; // if no displayName, use email
         setUser({ username });
       } else {
@@ -32,18 +31,19 @@ const App = () => {
       }
     });
 
-    // Cleanup the listener when component unmounts
     return () => unsubscribe();
   }, []);
 
+  
   return (
-    <NavigationContainer>
-      {isShowSplash ? (
-        <SplashScreen />
-      ) : (
-        <AppNavigator user={user} isGuest={isGuest} setUser={setUser} setIsGuest={setIsGuest} />
-      )}
-    </NavigationContainer>
+      <NavigationContainer>
+        {isShowSplash ? (
+          <SplashScreen />
+        ) : (
+          <AppNavigator user={user} isGuest={isGuest} setUser={setUser} setIsGuest={setIsGuest} />
+        )}
+      </NavigationContainer>
+    
   );
 };
 

@@ -1,13 +1,19 @@
 import React, {useState} from 'react';
 import { SafeAreaView, Text, StyleSheet, Image, TouchableOpacity,Alert} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 const Welcome = ({ navigation, setUser, setIsGuest }) => {
+    const auth = getAuth();
+
     const handleContinueAsGuest = () => {
-      setUser(null);
-      setIsGuest(true); 
-      Alert.alert("Guest Access", "You are continuing as a guest.");
-      navigation.navigate("HomeTabs");
+        signInAnonymously(auth)
+        .then(() => console.log("Signed in as guest"))
+        .catch((error) => console.error("Error signing in anonymously:", error));
+            
+        setUser(null);
+        setIsGuest(true); 
+        Alert.alert("Guest Access", "You are continuing as a guest.");
+        navigation.navigate("HomeTabs");
     };
 
     return (

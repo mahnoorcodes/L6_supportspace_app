@@ -177,14 +177,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
     paddingTop:100,
     paddingLeft: 20, 
     paddingRight: 20, 
   },
   sectionTitle2: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
     paddingTop:20,

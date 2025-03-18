@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, SafeAreaView,Text, StyleSheet, TouchableOpacity, Alert, ImageBackground, Dimensions} from 'react-native';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -6,9 +6,25 @@ import { useNavigation } from '@react-navigation/native';
 const Home = ({ user, isGuest }) => {
   const navigation = useNavigation();
   const screenWidth = Dimensions.get('window').width; 
+  const [moodHistory, setMoodHistory] = useState([]);
+
+  const moods = [
+    { icon: "smile", label: "Happy" },
+    { icon: "meh", label: "Neutral" },
+    { icon: "frown", label: "Sad" },
+    { icon: "angry", label: "Angry" },
+  ];
 
   const handleMoodPress = (mood) => {
-    console.log(`Mood selected: ${mood}`);
+    console.log(`Mood selected: ${mood.label}`);
+    const moodItem = {
+      id: Date.now().toString(),
+      mood: mood.label,
+      icon: mood.icon,
+      date: new Date().toLocaleString(),
+    };
+    setMoodHistory([moodItem, ...moodHistory]); 
+    navigation.navigate('Moods', { selectedMood: mood, moodHistory: [moodItem, ...moodHistory] });
   };
 
     return (
@@ -31,12 +47,12 @@ const Home = ({ user, isGuest }) => {
           <SafeAreaView style={styles.container}>
             <Text style={styles.header}>How are you feeling today?</Text>
             <SafeAreaView style={styles.moodContainer}>
-              {['Happy', 'Sad', 'Angry', 'Calm'].map((mood) => (
-                <TouchableOpacity key={mood} style={styles.moodButton} onPress={() => handleMoodPress(mood)}>
-                  <Text style={styles.moodText}>{mood}</Text>
-                </TouchableOpacity>
-              ))}
-            </SafeAreaView>
+            {moods.map((mood) => (
+              <TouchableOpacity key={mood.label} style={styles.moodButton} onPress={() => handleMoodPress(mood)}>
+                <FontAwesome5 name={mood.icon} size={28} color="#333" />
+              </TouchableOpacity>
+            ))}
+          </SafeAreaView>
 
             <Text style={styles.header}>Wellness Tools</Text>
             <SafeAreaView style={styles.toolsContainer}>
@@ -124,6 +140,12 @@ const Home = ({ user, isGuest }) => {
       fontWeight: 'bold',
       marginBottom: 10,
       textAlign: 'center',
+    },
+    moodLabel: {
+      marginTop: 5,
+      fontSize: 14,
+      color: "#333",
+      textAlign: "center",
     },
     moodContainer: {
       flexDirection: 'row',

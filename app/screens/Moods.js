@@ -1,32 +1,93 @@
-import React, {useEffect} from 'react';
-import { View, SafeAreaView,Text, StyleSheet, TouchableOpacity, Alert, ImageBackground, Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { View, SafeAreaView,Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useMood } from "../MoodContext";
 
 const Moods = () => {
   const navigation = useNavigation();
+  const [moodHistory, setMoodHistory] = useState([]);
+  const route = useRoute();
+
+  const moods = [
+    { icon: "smile", label: "Happy" },
+    { icon: "meh", label: "Neutral" },
+    { icon: "frown", label: "Sad" },
+    { icon: "angry", label: "Angry" },
+  ];
+
+  const addMood = (mood) => {
+    const newMood = {
+      id: Date.now().toString(),
+      mood: mood.label,
+      icon: mood.icon,
+      date: new Date().toLocaleString(),
+    };
+
+    setMoodHistory((prevHistory) => [newMood, ...prevHistory]);
+  };
+
+  useEffect(() => {
+    if (route.params?.selectedMood) {
+      addMood(route.params.selectedMood);  
+    }
+    // If moodHistory is passed, use it to initialize the state
+    if (route.params?.moodHistory) {
+      setMoodHistory(route.params.moodHistory);
+    }
+  }, [route.params?.selectedMood, route.params?.moodHistory]);
+
   return (
+    <LinearGradient
+      colors={['lightyellow', '#B5FFFC','pink','#FFCB77']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}>
+
     <SafeAreaView style={styles.container}>
       <SafeAreaView style={styles.headerContainer}>
       <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("HomeTabs")} />
         <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={styles.headerText}>Mood Tracker</Text>
+          <Text style={styles.headerText}>My Moods</Text>
         </SafeAreaView>
         <FontAwesome5 name="smile" size={24} color="black" />
       </SafeAreaView>
+
+      <Text style={styles.sectionTitle}>How are you feeling today?</Text>
+      <SafeAreaView style={styles.moodContainer}>
+        {moods.map((mood, index) => (
+          <TouchableOpacity key={index} onPress={() => addMood(mood)}>
+          <FontAwesome5 name={mood.icon} size={28} color="#333" />
+        </TouchableOpacity>
+        ))}
+      </SafeAreaView>
+
+      <Text style={styles.sectionTitle2}>Your Mood History</Text>
+      <FlatList
+        data={moodHistory}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.historyItem}>
+            <Text style={styles.historyDate}>{item.date}</Text>
+            <View style={styles.historyContent}>
+              <FontAwesome5 name={item.icon} size={20} color="#555" style={styles.historyIcon} />
+              <Text style={styles.historyMood}>{item.mood.label}</Text> 
+            </View>
+          </View>
+        )}
+      />
     </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
   },
   headerContainer: {
-    position: 'absolute', 
+    position: 'absolute',  
     top: 0,
     left: 0,
     right: 0,
@@ -43,7 +104,81 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginLeft: 10,
+  },
+  text: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    paddingTop:100,
+    paddingLeft: 20, 
+    paddingRight: 20, 
+  },
+  sectionTitle2: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    paddingTop:20,
+    paddingLeft: 20, 
+    paddingRight: 20, 
+  },
+  moodContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 20,
+    width: "100%",
+  },
+  moodButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#FFF",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  moodEmoji: {
+    fontSize: 28,
+  },
+  selectedMood: {
+    backgroundColor: "white",
+  },
+  historyItem: {
+    backgroundColor: "#FFF",
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
+    width: "100%",
+  },
+  historyDate: {
+    fontSize: 14,
+    color: "#888",
+  },
+  historyContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  historyMood: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });
 

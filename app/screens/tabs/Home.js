@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import { View, SafeAreaView,Text, StyleSheet, TouchableOpacity, Alert, ImageBackground, Dimensions} from 'react-native';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useMood } from "../../MoodContext";
+import { MoodContext, useMood } from '../../MoodContext';
+import { addMoodToDB, getMoodHistory } from '../../MoodsDatabase'; 
 
 const moods = [
   { icon: "smile", label: "Happy" },
@@ -14,12 +15,16 @@ const moods = [
 const Home = ({ user, isGuest }) => {
   const navigation = useNavigation();
   const screenWidth = Dimensions.get('window').width; 
-  const { addMood } = useMood();
 
-  const handleMoodPress = (mood) => {
-    console.log(`Mood selected: ${mood.label}`); 
-    addMood(mood);
-    navigation.navigate("Moods"); 
+  const handleMoodPress = async (mood) => {
+    if (user) {
+      const userId = user.id;  
+      await addMoodToDB(userId, mood.label, mood.icon);  
+      console.log(`Mood '${mood.label}' added to the database!`);
+      navigation.navigate("Moods", { mood });
+    } else {
+      console.log("User not logged in.");
+    }
   };
 
     return (

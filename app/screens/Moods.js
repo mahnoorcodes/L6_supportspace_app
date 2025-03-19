@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import { View, SafeAreaView,Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import React, { useEffect, useState} from 'react';
+import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { useMood } from "../MoodContext";
-import { addMoodToDB, getMoodHistory } from '../MoodsDatabase';
+import { useNavigation } from '@react-navigation/native';
+import { getAuth } from 'firebase/auth'; 
+import { addMoodToDB, getMoodHistory } from '../MoodsDatabase'; // Import your DB functions
 
 const moods = [
   { icon: "smile", label: "Happy" },
@@ -13,50 +13,63 @@ const moods = [
   { icon: "angry", label: "Angry" },
 ];
 
-const Moods = () => {
+const Moods = ({mood}) => {
   const navigation = useNavigation();
-  const { moodHistory, addMood } = useMood(); 
+  const [moodHistory, setMoodHistory] = useState([]);
+  const [user] = useState(null); // Replace with actual user ID or pass from props 
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        // First, add the selected mood to the database
+        await addMoodToDB(userId, mood.label, mood.icon);
+        console.log("Mood added successfully!");
+  
+        // Then fetch the updated mood history
+        const history = await getMoodHistory(userId);
+        console.log("Mood history:", history);
+  
+        // Update the state with the mood history
+        setMoodHistory(history);
+      } catch (error) {
+        console.error("Error fetching mood history:", error);
+      }
+    };
+  
+    fetchHistory();
+  }, [mood]); // Re-fetch history when mood changes
 
   return (
     <LinearGradient
-      colors={['lightyellow', '#B5FFFC','pink','#FFCB77']}
+      colors={['lightyellow', '#B5FFFC', 'pink', '#FFCB77']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.container}>
-
-    <SafeAreaView style={styles.container}>
-      <SafeAreaView style={styles.headerContainer}>
-      <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("HomeTabs")} />
-        <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={styles.headerText}>My Moods</Text>
+      style={styles.container}
+    >
+      <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.headerContainer}>
+          <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("HomeTabs")} />
+          <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
+            <Text style={styles.headerText}>My Moods</Text>
+          </SafeAreaView>
+          <FontAwesome5 name="smile" size={24} color="black" />
         </SafeAreaView>
-        <FontAwesome5 name="smile" size={24} color="black" />
-      </SafeAreaView>
 
-      <Text style={styles.sectionTitle}>How are you feeling today?</Text>
-      <View>
-        {moods.map((mood) => (
-          <TouchableOpacity key={mood.label} onPress={() => addMood(mood)}>
-            <FontAwesome5 name={mood.icon} size={28} color="#333" />
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <Text style={styles.sectionTitle2}>Your Mood History</Text>
-      <FlatList
-        data={moodHistory}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.historyItem}>
-            <Text style={styles.historyDate}>{item.date}</Text>
-            <View style={styles.historyContent}>
-              <FontAwesome5 name={item.icon} size={20} color="#555" style={styles.historyIcon} />
-              <Text style={styles.historyMood}>{item.mood.label}</Text> 
+        <Text style={styles.sectionTitle}>Your Mood History</Text>
+        <FlatList
+          data={moodHistory}
+          keyExtractor={(item) => item.id.toString()} 
+          renderItem={({ item }) => (
+            <View style={styles.historyItem}>
+              <Text style={styles.historyDate}>{item.date}</Text>
+              <View style={styles.historyContent}>
+                <FontAwesome5 name={item.icon} size={20} color="#555" style={styles.historyIcon} />
+                <Text style={styles.historyMood}>{item.mood}</Text>
+              </View>
             </View>
-          </View>
-        )}
-      />
-    </SafeAreaView>
+          )}
+        />
+      </SafeAreaView>
     </LinearGradient>
   );
 };
@@ -93,14 +106,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     paddingTop:100,
-    paddingLeft: 20, 
-    paddingRight: 20, 
-  },
-  sectionTitle2: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    paddingTop:20,
     paddingLeft: 20, 
     paddingRight: 20, 
   },

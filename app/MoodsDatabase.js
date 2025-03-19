@@ -61,32 +61,6 @@ export const getMoodHistory = async (userId) => {
   }
 };
 
-export const updateMood = async (id, userId, mood, icon) => {
-  const db = await setupDatabase();
-  if (!db) return;
-
-  const date = new Date().toLocaleString();
-
-  try {
-    await db.transactionAsync(async (tx) => {
-      await tx.executeSql(
-        'UPDATE moods SET userId = ?, mood = ?, icon = ?, date = ? WHERE id = ?',
-        [userId, mood, icon, date, id],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            console.log('Mood updated successfully');
-          } else {
-            console.error('Failed to update the mood');
-          }
-        }
-      );
-    });
-    console.log("Mood updated successfully.");
-  } catch (error) {
-    console.error("Error updating mood:", error);
-  }
-};
-
 export const deleteMood = async (id) => {
   const db = await setupDatabase();
   if (!db) return;

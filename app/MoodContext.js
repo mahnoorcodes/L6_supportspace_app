@@ -1,52 +1,46 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
-import { setupDatabase, addMoodToDB, getMoodHistory } from "./MoodsDatabase";
-import { Alert } from "react-native";
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { getMoodHistory, addMoodToDB } from './MoodsDatabase';
 
-const MoodContext = createContext();
+// Define the context
+export const MoodContext = createContext();
 
-export const MoodProvider = ({ children, user, isGuest }) => {
-  const [moodHistory, setMoodHistory] = useState([]);
-
-  useEffect(() => {
-    const fetchMoods = async () => {
-      await setupDatabase();
-      const userId = isGuest ? "guest" : user?.uid;
-      if (userId) {
-        getMoodHistory(userId, setMoodHistory);
-      } else {
-        setMoodHistory([]); // Clear if no user
-      }
-    };
-    fetchMoods();
-  }, [user, isGuest]);
-
-  const addMood = (mood) => {
-    if (!user) {
-      Alert.alert("Sign In Required", "Please sign in to track your moods.");
-      console.log("No user logged in!");
-      return;
-    }
-    const newMood = {
-      id: Date.now().toString(),
-      mood: mood.label,
-      icon: mood.icon,
-      date: new Date().toLocaleString(),
-    };
-
-    setMoodHistory((prevHistory) => [newMood, ...prevHistory]);
-  };
-
-  return (
-    <MoodContext.Provider value={{ moodHistory, addMood }}> 
-      {children}
-    </MoodContext.Provider>
-  );
-};
-
+// Custom hook to use the MoodContext
 export const useMood = () => {
   const context = useContext(MoodContext);
   if (!context) {
-    throw new Error("useMood must be used within a MoodProvider");
+    throw new Error('useMood must be used within a MoodContext.Provider');
   }
   return context;
+};
+
+// MoodProvider to wrap around components that need access to mood data
+export const MoodProvider = ({ children }) => {
+  const [moodHistory, setMoodHistory] = useState([]);
+
+  // Fetch mood history when the component mounts
+  useEffect(() => {
+    const fetchMoods = async () => {
+      try {
+        const moods = await getMoodHistory();
+        setMoodHistory(moods);
+      } catch (error) {
+        console.log('Error fetching moods:', error);
+      }
+    };
+
+    fetchMoods();
+  }, []);
+
+  // Add a new mood to the history and update the state
+  const addMood = async (mood) => {
+    await addMoodToDB(mood);
+    const updatedMoods = await getMoodHistory();
+    setMoodHistory(updatedMoods);
+  };
+
+  return (
+    <MoodContext.Provider value={{ moodHistory, addMood }}>
+      {children}
+    </MoodContext.Provider>
+  );
 };

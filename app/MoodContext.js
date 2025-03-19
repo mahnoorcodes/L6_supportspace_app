@@ -1,31 +1,52 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { setupDatabase, addMoodToDB, getMoodHistory } from "./MoodsDatabase";
+import { Alert } from "react-native";
 
 const MoodContext = createContext();
 
-export const MoodProvider = ({ children }) => {
-  const [selectedMood, setSelectedMood] = useState(null);
-  const [moodHistory, setMoodHistory] = useState([
-    { id: "1", mood: "Happy", icon: "smile", date: "Today" },
-    { id: "2", mood: "Sad", icon: "frown", date: "Yesterday" },
-  ]);
+export const MoodProvider = ({ children, user, isGuest }) => {
+  const [moodHistory, setMoodHistory] = useState([]);
+
+  useEffect(() => {
+    const fetchMoods = async () => {
+      await setupDatabase();
+      const userId = isGuest ? "guest" : user?.uid;
+      if (userId) {
+        getMoodHistory(userId, setMoodHistory);
+      } else {
+        setMoodHistory([]); // Clear if no user
+      }
+    };
+    fetchMoods();
+  }, [user, isGuest]);
 
   const addMood = (mood) => {
+    if (!user) {
+      Alert.alert("Sign In Required", "Please sign in to track your moods.");
+      console.log("No user logged in!");
+      return;
+    }
     const newMood = {
       id: Date.now().toString(),
       mood: mood.label,
       icon: mood.icon,
-      date: "Just now",
+      date: new Date().toLocaleString(),
     };
 
     setMoodHistory((prevHistory) => [newMood, ...prevHistory]);
-    setSelectedMood(mood);
   };
 
   return (
-    <MoodContext.Provider value={{ selectedMood, moodHistory, addMood }}>
+    <MoodContext.Provider value={{ moodHistory, addMood }}> 
       {children}
     </MoodContext.Provider>
   );
 };
 
-export const useMood = () => useContext(MoodContext);
+export const useMood = () => {
+  const context = useContext(MoodContext);
+  if (!context) {
+    throw new Error("useMood must be used within a MoodProvider");
+  }
+  return context;
+};

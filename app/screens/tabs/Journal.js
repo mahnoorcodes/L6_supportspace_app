@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, SafeAreaView} from 'react-native';
 import { Entypo, AntDesign, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { getJournalEntry, saveJournalEntry } from '../../Database';
+import { getJournalEntry, saveJournalEntry } from '../../JournalDatabase';
 import { useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 

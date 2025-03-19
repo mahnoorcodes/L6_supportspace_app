@@ -4,39 +4,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useMood } from "../MoodContext";
+import { addMoodToDB, getMoodHistory } from '../MoodsDatabase';
+
+const moods = [
+  { icon: "smile", label: "Happy" },
+  { icon: "meh", label: "Neutral" },
+  { icon: "frown", label: "Sad" },
+  { icon: "angry", label: "Angry" },
+];
 
 const Moods = () => {
   const navigation = useNavigation();
-  const [moodHistory, setMoodHistory] = useState([]);
-  const route = useRoute();
-
-  const moods = [
-    { icon: "smile", label: "Happy" },
-    { icon: "meh", label: "Neutral" },
-    { icon: "frown", label: "Sad" },
-    { icon: "angry", label: "Angry" },
-  ];
-
-  const addMood = (mood) => {
-    const newMood = {
-      id: Date.now().toString(),
-      mood: mood.label,
-      icon: mood.icon,
-      date: new Date().toLocaleString(),
-    };
-
-    setMoodHistory((prevHistory) => [newMood, ...prevHistory]);
-  };
-
-  useEffect(() => {
-    if (route.params?.selectedMood) {
-      addMood(route.params.selectedMood);  
-    }
-    // If moodHistory is passed, use it to initialize the state
-    if (route.params?.moodHistory) {
-      setMoodHistory(route.params.moodHistory);
-    }
-  }, [route.params?.selectedMood, route.params?.moodHistory]);
+  const { moodHistory, addMood } = useMood(); 
 
   return (
     <LinearGradient
@@ -55,13 +34,13 @@ const Moods = () => {
       </SafeAreaView>
 
       <Text style={styles.sectionTitle}>How are you feeling today?</Text>
-      <SafeAreaView style={styles.moodContainer}>
-        {moods.map((mood, index) => (
-          <TouchableOpacity key={index} onPress={() => addMood(mood)}>
-          <FontAwesome5 name={mood.icon} size={28} color="#333" />
-        </TouchableOpacity>
+      <View>
+        {moods.map((mood) => (
+          <TouchableOpacity key={mood.label} onPress={() => addMood(mood)}>
+            <FontAwesome5 name={mood.icon} size={28} color="#333" />
+          </TouchableOpacity>
         ))}
-      </SafeAreaView>
+      </View>
 
       <Text style={styles.sectionTitle2}>Your Mood History</Text>
       <FlatList

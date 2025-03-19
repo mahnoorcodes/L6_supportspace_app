@@ -2,36 +2,30 @@ import React, {useEffect, useState} from 'react';
 import { View, SafeAreaView,Text, StyleSheet, TouchableOpacity, Alert, ImageBackground, Dimensions} from 'react-native';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useMood } from "../../MoodContext";
+
+const moods = [
+  { icon: "smile", label: "Happy" },
+  { icon: "meh", label: "Neutral" },
+  { icon: "frown", label: "Sad" },
+  { icon: "angry", label: "Angry" },
+];
 
 const Home = ({ user, isGuest }) => {
   const navigation = useNavigation();
   const screenWidth = Dimensions.get('window').width; 
-  const [moodHistory, setMoodHistory] = useState([]);
-
-  const moods = [
-    { icon: "smile", label: "Happy" },
-    { icon: "meh", label: "Neutral" },
-    { icon: "frown", label: "Sad" },
-    { icon: "angry", label: "Angry" },
-  ];
+  const { addMood } = useMood();
 
   const handleMoodPress = (mood) => {
-    console.log(`Mood selected: ${mood.label}`);
-    const moodItem = {
-      id: Date.now().toString(),
-      mood: mood.label,
-      icon: mood.icon,
-      date: new Date().toLocaleString(),
-    };
-    setMoodHistory([moodItem, ...moodHistory]); 
-    navigation.navigate('Moods', { selectedMood: mood, moodHistory: [moodItem, ...moodHistory] });
+    console.log(`Mood selected: ${mood.label}`); 
+    addMood(mood);
+    navigation.navigate("Moods"); 
   };
 
     return (
       <ImageBackground source={require('../../assets/bg.png')} style={styles.backgroundImage} resizeMode='cover'>    
         <SafeAreaView style={styles.container}>
           <SafeAreaView style={styles.headerContainer}>
-          <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("Welcome")} />
           <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
             <Text style={styles.headerText}>Support Space</Text>
           </SafeAreaView>

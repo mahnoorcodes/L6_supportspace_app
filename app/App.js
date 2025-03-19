@@ -26,19 +26,18 @@ const App = () => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        const username = firebaseUser.displayName || firebaseUser.email; // if no displayName, use email
-        setUser({ username });
+        setUser({ uid: firebaseUser.uid, username: firebaseUser.displayName || firebaseUser.email });
+        setIsGuest(false);
       } else {
         setUser(null);
       }
     });
-
     return () => unsubscribe();
   }, []);
 
   
   return (
-    <MoodProvider>
+    <MoodProvider user={user} isGuest={isGuest}>
       <NavigationContainer>
         {isShowSplash ? (
           <SplashScreen />

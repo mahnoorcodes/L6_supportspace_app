@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView , Alert} from 'react-native';
 import { Ionicons,Entypo } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { saveJournalEntry, setupDatabase , updateJournalEntry, deleteJournalEntry} from '../Database';
+import { saveJournalEntry, setupDatabase , updateJournalEntry, deleteJournalEntry} from '../JournalDatabase';
 
 const NewJournalEntry = () => {
   const navigation = useNavigation();

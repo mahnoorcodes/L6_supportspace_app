@@ -15,6 +15,7 @@ import Meditate from './screens/Meditate';
 import Mindfulness from './screens/Mindfulness';
 import NewJournalEntry from './screens/NewJournalEntry';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { MoodProvider } from "./MoodContext";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

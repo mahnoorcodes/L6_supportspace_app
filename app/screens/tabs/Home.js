@@ -17,9 +17,9 @@ const Home = ({ user, isGuest }) => {
 
   const handleMoodPress = async (mood) => {
     if (user) {
-      const userId = user.id;  
+      const userId = user.uid;  
       console.log("Mood before navigating:", mood); 
-      await addMoodToDB(userId, mood.label, mood.icon);  
+      await addMoodToDB(mood.label, mood.icon);  
       console.log(`Mood (Home)'${mood.label}' added to the database!`);
       navigation.navigate("Moods", { mood });
     } else {

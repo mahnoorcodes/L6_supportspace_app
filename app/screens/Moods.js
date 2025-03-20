@@ -3,8 +3,8 @@ import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, FlatList } from
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { auth } from '../config/firebaseConfig'; 
-import { onAuthStateChanged } from 'firebase/auth'; 
+import { auth} from '../config/firebaseConfig'; 
+import { onAuthStateChanged, getAuth } from 'firebase/auth'; 
 import { addMoodToDB, getMoodHistory } from '../MoodsDatabase'; 
 
 const Moods = ({mood}) => {
@@ -31,59 +31,32 @@ const Moods = ({mood}) => {
         console.error("Error fetching user:", error);
       }
     };
-
     fetchUser();
   }, []);  
-  
-  useEffect(() => {
-    const fetchMoodHistory = async () => {
-      if (!user || !user.uid) {
-        Alert.alert("Log in to save your moods!"); 
-        return;
-      }
-      if (!mood || !mood.label) {  
-        console.log("Mood is undefined or missing label.");
-        return;
-      }
-      setMoodHistory([]);
+
+  const fetchMoodHistory = async () => {
       try {
-        await addMoodToDB(user.uid, mood.label, mood.icon);
-        console.log("Mood added successfully!");
-
-        const history = await getMoodHistory(user.uid);
-        console.log("Raw fetched mood history:", history);
-
-        if (Array.isArray(history) && history.length > 0) {
-          setMoodHistory([...history]);
-          console.log("Updated mood history:", history); 
+        const data = await getMoodHistory(); 
+        if (data && data.length > 0) {
+          console.log("Mood History:", data);
+          const history = data.map((item, index) => ({
+            mood: item.mood,
+            date: item.date,
+            id: item.id ? item.id.toString() : index.toString(),  // Ensure id is a string
+        }));
+        setMoodHistory(history);
         } else {
-          console.log("No moods found for this user");
+          console.log("No mood history found.");
           setMoodHistory([]); 
         }
-        
       } catch (error) {
-        console.error("Error fetching mood history:", error);
+        console.error("Error mood history:", error);
       }
-    };  
-    if (mood) {
+    };
+  
+    useEffect(() => {
       fetchMoodHistory();
-    }
-  }, [mood, user]);
-
-  useEffect(() => {
-  if (!user || !user.uid) return;
-
-  const fetchHistory = async () => {
-    try {
-      const history = await getMoodHistory(user.uid);
-      console.log("Fetched history:", history);
-      setMoodHistory(history.length > 0 ? [...history] : []);
-    } catch (error) {
-      console.error("Error fetching mood history:", error);
-    }
-  };
-  fetchHistory();
-}, [user]);
+    }, []);
 
   return (
     <LinearGradient
@@ -103,7 +76,7 @@ const Moods = ({mood}) => {
 
         <Text style={styles.sectionTitle}>Your Mood History </Text>
         {moodHistory.length === 0 ? (
-        <Text>No mood history found</Text>
+        <Text style={{padding:10, textAlign:'center', backgroundColor:"white"}}>No mood history found</Text>
       ) : (
         <FlatList
         data={moodHistory}
@@ -114,7 +87,6 @@ const Moods = ({mood}) => {
             <Text style={{ color: "gray" }}>Date: {item.date}</Text>
           </View>
         )}
-        extraData={moodHistory}
       />    
       )}
       </SafeAreaView>

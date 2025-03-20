@@ -47,7 +47,7 @@ const HomeTabs = ({user}) => {
       />
       <Tab.Screen 
         name="Journal" 
-        component={Journal} 
+        children={() => <Journal user={user} />} 
         options={{
           tabBarIcon: ({ focused }) => (
             <FontAwesome5 name="book" size={24} color={focused ? "black" : "gray"} />
@@ -88,9 +88,12 @@ const AppNavigator = () => {
         <Stack.Screen name="HomeTabs">
             {(props) => <HomeTabs {...props} user={user} isGuest={isGuest} />}
           </Stack.Screen>
+          <Stack.Screen name="Journal" >
+          {(props) => <HomeTabs {...props} user={user} isGuest={isGuest} />}
+          </Stack.Screen>
 
         {/* Additional Screens */}
-        <Stack.Screen name="Journal" component={Journal} />
+
         <Stack.Screen name="Meditate" component={Meditate} />
         <Stack.Screen name="Mindfulness" component={Mindfulness} />
         <Stack.Screen name="Moods" component={Moods} />

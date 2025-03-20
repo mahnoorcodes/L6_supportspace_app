@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ImageBackground } from 'react-native';
-import {signInWithEmailAndPassword, getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import {signInWithEmailAndPassword, getAuth, sendPasswordResetEmail , onAuthStateChanged} from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Home from './tabs/Home';
@@ -15,14 +15,23 @@ const Login = ({ navigation, setUser, setIsGuest }) => {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         setUser(userCredential.user);
-        Alert.alert('Success', 'Logged in succesfully');
-        navigation.navigate("HomeTabs");
-      } catch (error) {
-        console.error('Error logging in: ', error.message);
-        Alert.alert('Error', error.message);
-      }
-    };
-
+        onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("User is logged in: ", user);
+          setUser(user); 
+        } else {
+          console.log("User is logged out");
+          setUser(null);
+        }
+      });
+  
+      Alert.alert("Success", "Logged in successfully");
+      navigation.navigate("HomeTabs"); 
+    } catch (error) {
+      console.error("Error logging in: ", error.message);
+      Alert.alert("Error", error.message);
+    }
+  };
     const handlePasswordReset = () => {
         const auth = getAuth();
 

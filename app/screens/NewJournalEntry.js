@@ -15,7 +15,7 @@ const NewJournalEntry = () => {
   const { existingEntry, refreshEntries } = route.params || {}; 
   useEffect(() => {
     if (existingEntry) {
-      console.log('Existing Entry:', existingEntry);  // Log to inspect the data
+      console.log('Existing Entry:', existingEntry);  
       setTitle(existingEntry.title);
       setEntry(existingEntry.entry);
       setDate(existingEntry.date);
@@ -87,7 +87,7 @@ const NewJournalEntry = () => {
   return (
     <SafeAreaView style={styles.container}>
       <SafeAreaView style={styles.headerContainer}>
-      <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.goBack()} />
+      <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("Journal")} />
         <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
           <Text style={styles.headerText}>New Journal Entry</Text>
         </SafeAreaView>
@@ -118,7 +118,7 @@ const NewJournalEntry = () => {
         </TouchableOpacity>
       </SafeAreaView>
 
-      <TouchableOpacity style={styles.twoButtons} onPress={() => {handleSave(); navigation.navigate('NewJournalEntry');}}>
+      <TouchableOpacity style={styles.twoButtons} onPress={() => {handleSave(); navigation.navigate('Journal');}}>
         <Text style={styles.twoButtonsText}>Save</Text>
       </TouchableOpacity>
 

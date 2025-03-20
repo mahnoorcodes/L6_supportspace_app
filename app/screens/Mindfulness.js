@@ -39,10 +39,17 @@ const Mindfulness = () => {
   };
   
   useEffect(() => {
-    setTextColor(getRandomColor());
+    const color = getRandomColor();
+    setTextColor(color);
     fetchData();
   }, []);
-  
+  useEffect(() => {
+    if (apiResponse) {
+      const color = getRandomColor(); 
+      setTextColor(color);
+    }
+  }, [apiResponse]);
+
   // Mindful tasks from https://www.mayoclinic.org/healthy-lifestyle/consumer-health/in-depth/mindfulness-exercises/art-20046356
   const mindfulTasks = [
     {

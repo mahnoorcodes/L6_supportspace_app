@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 
 let dbInstance = null; // Global variable to store the database
-
+  
 export const setupDatabase = async () => {
   if (!dbInstance) {
     try {
@@ -29,37 +29,45 @@ export const setupDatabase = async () => {
 export const addMoodToDB = async (userId, mood, icon) => {
   const db = await setupDatabase();
   if (!db) return;
-
   const date = new Date().toLocaleString();
   
   try {
     await db.runAsync(
-      `INSERT INTO moods (userId, mood, icon, date) VALUES (?, ?, ?, ?);`,
-      [userId, mood, icon, date]
+      'INSERT INTO moods (mood, icon, date, userId) VALUES (?, ?, ?, ?)', 
+      [mood, icon, new Date().toLocaleString(), userId]
     );
-    console.log("Mood added successfully!");
+    console.log(`Mood '${mood}' added to the database!`);
   } catch (error) {
     console.error("Error adding mood:", error);
   }
 };
 
 export const getMoodHistory = async (userId) => {
-  const db = await setupDatabase();
-  if (!db) return [];
+    const db = await setupDatabase();
+    if (!db) return [];
   
-  try {
-    const result = await db.getAllAsync(`SELECT * FROM moods WHERE userId = ? ORDER BY id DESC;`, [userId]);
-    console.log("Mood history:", result);
-    if (!result || !Array.isArray(result)) {
-      console.error("Unexpected result format:", result);
+    try {
+      console.log("Executing SQL Query for user:", userId);
+    
+      await db.execAsync("PRAGMA wal_checkpoint(FULL);"); 
+  
+      const result = await db.getAllAsync(
+        `SELECT * FROM moods WHERE userId = ? ORDER BY id DESC;`,
+        [userId]
+      );
+      console.log("Mood history fetched:", result);
+  
+      if (!result || !Array.isArray(result)) {
+        console.error("Unexpected result format:", result);
+        return [];
+      }
+      return result;
+    } catch (error) {
+      console.error("Error fetching mood history:", error);
       return [];
     }
-    return result;
-  } catch (error) {
-    console.error("Error fetching mood history:", error);
-    return [];
-  }
-};
+  };
+  
 
 export const deleteMood = async (id) => {
   const db = await setupDatabase();
@@ -73,3 +81,15 @@ export const deleteMood = async (id) => {
   }
 };
 
+export const dropMoodsTable = async () => {
+    const db = await setupDatabase();
+    if (!db) return;
+  
+    try {
+      await db.execAsync(`DROP TABLE IF EXISTS moods;`);
+      console.log("Moods table dropped successfully!");
+    } catch (error) {
+      console.error("Error dropping moods table:", error);
+    }
+  };
+  

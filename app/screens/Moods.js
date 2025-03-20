@@ -3,41 +3,87 @@ import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, FlatList } from
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { getAuth } from 'firebase/auth'; 
-import { addMoodToDB, getMoodHistory } from '../MoodsDatabase'; // Import your DB functions
-
-const moods = [
-  { icon: "smile", label: "Happy" },
-  { icon: "meh", label: "Neutral" },
-  { icon: "frown", label: "Sad" },
-  { icon: "angry", label: "Angry" },
-];
+import { auth } from '../config/firebaseConfig'; 
+import { onAuthStateChanged } from 'firebase/auth'; 
+import { addMoodToDB, getMoodHistory } from '../MoodsDatabase'; 
 
 const Moods = ({mood}) => {
   const navigation = useNavigation();
   const [moodHistory, setMoodHistory] = useState([]);
-  const [user] = useState(null); // Replace with actual user ID or pass from props 
+  const [user, setUser] = useState(null); 
 
+    useEffect(() => {
+      console.log("Mood History Updated:", moodHistory);
+    }, [moodHistory]);
+  
   useEffect(() => {
-    const fetchHistory = async () => {
+    const fetchUser = async () => {
       try {
-        // First, add the selected mood to the database
-        await addMoodToDB(userId, mood.label, mood.icon);
+        const currentUser = auth.currentUser;
+        console.log("Current User:", currentUser); 
+        if (currentUser) {
+          setUser(currentUser); 
+        } else {
+          setUser(null); 
+          console.log("User not logged in.");
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);  
+  
+  useEffect(() => {
+    const fetchMoodHistory = async () => {
+      if (!user || !user.uid) {
+        Alert.alert("Log in to save your moods!"); 
+        return;
+      }
+      if (!mood || !mood.label) {  
+        console.log("Mood is undefined or missing label.");
+        return;
+      }
+      setMoodHistory([]);
+      try {
+        await addMoodToDB(user.uid, mood.label, mood.icon);
         console.log("Mood added successfully!");
-  
-        // Then fetch the updated mood history
-        const history = await getMoodHistory(userId);
-        console.log("Mood history:", history);
-  
-        // Update the state with the mood history
-        setMoodHistory(history);
+
+        const history = await getMoodHistory(user.uid);
+        console.log("Raw fetched mood history:", history);
+
+        if (Array.isArray(history) && history.length > 0) {
+          setMoodHistory([...history]);
+          console.log("Updated mood history:", history); 
+        } else {
+          console.log("No moods found for this user");
+          setMoodHistory([]); 
+        }
+        
       } catch (error) {
         console.error("Error fetching mood history:", error);
       }
-    };
-  
-    fetchHistory();
-  }, [mood]); // Re-fetch history when mood changes
+    };  
+    if (mood) {
+      fetchMoodHistory();
+    }
+  }, [mood, user]);
+
+  useEffect(() => {
+  if (!user || !user.uid) return;
+
+  const fetchHistory = async () => {
+    try {
+      const history = await getMoodHistory(user.uid);
+      console.log("Fetched history:", history);
+      setMoodHistory(history.length > 0 ? [...history] : []);
+    } catch (error) {
+      console.error("Error fetching mood history:", error);
+    }
+  };
+  fetchHistory();
+}, [user]);
 
   return (
     <LinearGradient
@@ -55,20 +101,22 @@ const Moods = ({mood}) => {
           <FontAwesome5 name="smile" size={24} color="black" />
         </SafeAreaView>
 
-        <Text style={styles.sectionTitle}>Your Mood History</Text>
+        <Text style={styles.sectionTitle}>Your Mood History </Text>
+        {moodHistory.length === 0 ? (
+        <Text>No mood history found</Text>
+      ) : (
         <FlatList
-          data={moodHistory}
-          keyExtractor={(item) => item.id.toString()} 
-          renderItem={({ item }) => (
-            <View style={styles.historyItem}>
-              <Text style={styles.historyDate}>{item.date}</Text>
-              <View style={styles.historyContent}>
-                <FontAwesome5 name={item.icon} size={20} color="#555" style={styles.historyIcon} />
-                <Text style={styles.historyMood}>{item.mood}</Text>
-              </View>
-            </View>
-          )}
-        />
+        data={moodHistory}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={{ padding: 10, backgroundColor:'white' }}>
+            <Text style={{ fontSize: 16 }}>Mood: {item.mood}</Text>
+            <Text style={{ color: "gray" }}>Date: {item.date}</Text>
+          </View>
+        )}
+        extraData={moodHistory}
+      />    
+      )}
       </SafeAreaView>
     </LinearGradient>
   );

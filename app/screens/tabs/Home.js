@@ -2,7 +2,6 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import { View, SafeAreaView,Text, StyleSheet, TouchableOpacity, Alert, ImageBackground, Dimensions} from 'react-native';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { MoodContext, useMood } from '../../MoodContext';
 import { addMoodToDB, getMoodHistory } from '../../MoodsDatabase'; 
 
 const moods = [
@@ -19,11 +18,13 @@ const Home = ({ user, isGuest }) => {
   const handleMoodPress = async (mood) => {
     if (user) {
       const userId = user.id;  
+      console.log("Mood before navigating:", mood); 
       await addMoodToDB(userId, mood.label, mood.icon);  
-      console.log(`Mood '${mood.label}' added to the database!`);
+      console.log(`Mood (Home)'${mood.label}' added to the database!`);
       navigation.navigate("Moods", { mood });
     } else {
       console.log("User not logged in.");
+      Alert.alert("Log in to save your moods!");
     }
   };
 

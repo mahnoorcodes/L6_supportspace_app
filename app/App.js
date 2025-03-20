@@ -7,7 +7,6 @@ import SignUp from './screens/SignUp';
 import Login from './screens/Login';
 import Home from './screens/tabs/Home';
 import Moods from './screens/Moods';
-import { MoodProvider } from './MoodContext';
 import AppNavigator from './AppNavigator'; 
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
@@ -37,7 +36,6 @@ const App = () => {
 
   
   return (
-    <MoodProvider>
       <NavigationContainer>
         {isShowSplash ? (
           <SplashScreen />
@@ -45,7 +43,6 @@ const App = () => {
           <AppNavigator user={user} isGuest={isGuest} setUser={setUser} setIsGuest={setIsGuest} />
         )}
       </NavigationContainer>
-    </MoodProvider>
   );
 };
 

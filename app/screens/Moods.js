@@ -75,20 +75,21 @@ const Moods = ({mood}) => {
         </SafeAreaView>
 
         <Text style={styles.sectionTitle}>Your Mood History </Text>
-        {moodHistory.length === 0 ? (
-        <Text style={{padding:10, textAlign:'center', backgroundColor:"white"}}>No mood history found</Text>
-      ) : (
-        <FlatList
-        data={moodHistory}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={{ padding: 10, backgroundColor:'white' }}>
-            <Text style={{ fontSize: 16 }}>Mood: {item.mood}</Text>
-            <Text style={{ color: "gray" }}>Date: {item.date}</Text>
-          </View>
+        <SafeAreaView style={styles.moodHistory}>
+          {moodHistory.length === 0 ? (
+          <Text style={{padding:10, textAlign:'center', backgroundColor:"white", color: '#4A4A4A'}}>No mood history found</Text>
+        ) : (
+          <FlatList
+          data={moodHistory}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={{ padding: 10, backgroundColor:'white' }}>
+              <Text style={{ fontSize: 16 }}>Mood: {item.mood}</Text>
+              <Text style={{ color: "gray" }}>Date: {item.date}</Text>
+            </View>
+          )}/>    
         )}
-      />    
-      )}
+        </SafeAreaView>
       </SafeAreaView>
     </LinearGradient>
   );
@@ -120,6 +121,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     marginBottom: 20,
+    color: '#4A4A4A', 
   },
   sectionTitle: {
     fontSize: 24,
@@ -128,6 +130,18 @@ const styles = StyleSheet.create({
     paddingTop:100,
     paddingLeft: 20, 
     paddingRight: 20, 
+    color: '#4A4A4A', 
+  },
+  moodHistory:{
+    backgroundColor: "white", 
+    padding: 20, 
+    borderRadius: 10, 
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
+    margin: 10,
   },
   moodContainer: {
     flexDirection: "row",
@@ -136,6 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 20,
     width: "100%",
+    
   },
   moodButton: {
     width: 60,

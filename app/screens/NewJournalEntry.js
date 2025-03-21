@@ -33,9 +33,10 @@ const NewJournalEntry = () => {
   const handleSave = async () => {
     if (!title || !entry) {
       Alert.alert("Error", "Title and entry cannot be empty.");
-      return; 
+      return;
     }
-    
+    navigation.navigate("HomeTabs", { screen: "Journal" });
+
     try {
       const currentDate = new Date().toLocaleDateString('en-GB');
       const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -48,7 +49,7 @@ const NewJournalEntry = () => {
         Alert.alert("Success", "Journal entry saved!");
       }
 
-      navigation.navigate('Journal');
+      navigation.navigate("HomeTabs", { screen: "Journal" })
     } 
     catch (error) {
       Alert.alert("Error", "There was an issue saving your entry.");
@@ -87,7 +88,7 @@ const NewJournalEntry = () => {
   return (
     <SafeAreaView style={styles.container}>
       <SafeAreaView style={styles.headerContainer}>
-      <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("Journal")} />
+      <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate("HomeTabs", { screen: "Journal" })} />
         <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
           <Text style={styles.headerText}>New Journal Entry</Text>
         </SafeAreaView>
@@ -98,12 +99,13 @@ const NewJournalEntry = () => {
         <Text style={styles.timeText}>{time}</Text>
       </SafeAreaView>
 
-      <TextInput
-        style={styles.titleInput}
-        placeholder="Title..."
-        value={title}
-        onChangeText={setTitle}
-      />
+      <SafeAreaView style={styles.titleContainer}>
+        <TextInput
+          placeholder="Title..."
+          value={title}
+          onChangeText={setTitle}
+        />
+      </SafeAreaView>
 
       <SafeAreaView style={styles.entryContainer}>
         <TextInput
@@ -118,7 +120,7 @@ const NewJournalEntry = () => {
         </TouchableOpacity>
       </SafeAreaView>
 
-      <TouchableOpacity style={styles.twoButtons} onPress={() => {handleSave(); navigation.navigate('Journal');}}>
+      <TouchableOpacity style={styles.twoButtons} onPress={() => {handleSave(); navigation.navigate("HomeTabs", { screen: "Journal" })}}>
         <Text style={styles.twoButtonsText}>Save</Text>
       </TouchableOpacity>
 
@@ -132,7 +134,7 @@ const NewJournalEntry = () => {
                 }
                 setTitle('');setEntry('');setDate('');setTime('');
                 Alert.alert("Success", "Entry deleted."); 
-                navigation.navigate('Journal');
+                navigation.navigate("HomeTabs", { screen: "Journal" })
               } catch (error) {
                 Alert.alert("Error", "There was an issue deleting the entry.");
                 console.error("Error deleting journal entry:", error);
@@ -196,20 +198,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  titleInput: {
+  titleContainer: {
     backgroundColor: '#EDEDED',
     borderRadius: 10,
-    padding: 12,
+    padding: 10,
     fontSize: 16,
-    marginBottom: 15,
+    marginBottom: 15,shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,    
   },
+
   entryContainer: {
     flexDirection: 'row',
     alignItems: 'top',
+    marginBottom:30,
     backgroundColor: '#EDEDED',
     borderRadius: 15,
     padding: 10,
-    height: 200,
+    height: 400,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   entryInput: {
     flex: 1,
@@ -222,10 +235,19 @@ const styles = StyleSheet.create({
   },
   twoButtons: {
     backgroundColor: 'black',
-    borderRadius: 10,
-    padding: 15,
-    alignItems: 'center',
-    marginTop: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    marginVertical: 10,
+    width: 250,
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   twoButtonsText: {
     color: 'white',

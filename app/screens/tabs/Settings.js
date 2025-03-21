@@ -89,8 +89,9 @@ const Settings = () => {
           <FontAwesome5 name="cog" size={24} color="black" />
         </SafeAreaView>
 
+      
+      <SafeAreaView style={[styles.profileContainer, {alignItems:'center'}]}>
       <Text style={styles.header}>Profile</Text>
-      <SafeAreaView style={styles.profileContainer}>
         <Icon name="user" size={60} color="white" style={styles.profileIcon} />
       </SafeAreaView>
 
@@ -133,10 +134,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginVertical: 10,
-  },
+    marginVertical: 20,
+    color: '#4A4A4A',
+  },  
   headerContainer: {
     top: 0,
     left: 0,
@@ -155,16 +157,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
-  header: {  
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginVertical: 20,
-    textAlign: 'center',
-  },
   profileContainer: {
     padding: 10,
     alignItems: 'center',
     textAlign : 'center', 
+    
   },
   profileIcon: {
     alignItems: 'center',
@@ -179,6 +176,11 @@ const styles = StyleSheet.create({
     width: 250,
     paddingHorizontal: 10,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   icon: {
     marginRight: 10,
@@ -195,6 +197,11 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     width:200,
     alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   buttonText: {
     fontSize: 16,
@@ -210,6 +217,11 @@ const styles = StyleSheet.create({
     marginVertical: 16, 
     width:200,
     alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3, 
   },
   
   deleteButtonText: {
@@ -217,6 +229,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFF',
     textAlign: 'center',
+    
   },  
   footerContainer: {
     position: 'absolute',

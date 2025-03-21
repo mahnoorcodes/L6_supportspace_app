@@ -73,7 +73,7 @@ const AppNavigator = () => {
 
   return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* Authentication Screens (No Bottom Tabs) */}
+        {/* Authentication Screens */}
         <Stack.Screen name="Welcome">
           {(props) => <Welcome {...props} setUser={setUser} setIsGuest={setIsGuest} />}
         </Stack.Screen>

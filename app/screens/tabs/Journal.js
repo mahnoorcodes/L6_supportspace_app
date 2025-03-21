@@ -81,9 +81,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
     marginVertical: 10,
+    color: '#4A4A4A'
   },
   headerContainer: {
     position: 'absolute',  
@@ -120,10 +121,16 @@ const styles = StyleSheet.create({
     padding: 25,
     borderRadius: 10,
     marginVertical: 15,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   newEntryText: {
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: 'bold',
+    color: '#4A4A4A'
   },
   entryContainer: {
     flexDirection: 'row',
@@ -132,6 +139,11 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginVertical: 15,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   entryIcon: {
     width: 40,

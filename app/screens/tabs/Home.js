@@ -89,11 +89,25 @@ const Home = ({ user, isGuest }) => {
       padding: 20,
     },
     greeting: { 
-      fontSize: 22, 
+      fontSize: 24, 
       fontWeight: 'bold', 
       marginBottom: 20,
-      paddingTop: 100,  
+      marginTop: 100,  
       justifyContent:'center',
+      color: '#4A4A4A', 
+      textShadowRadius: 4,
+      letterSpacing: 1.2, 
+      borderWidth: 2, 
+      borderColor: 'white', 
+      borderRadius: 10, 
+      backgroundColor:'white',
+      paddingHorizontal: 15, 
+      alignSelf: 'center', 
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowOffset: { width: 0, height: 3 },
+      shadowRadius: 5,
+      elevation: 3,
     },
     headerContainer: {
       position: 'absolute', 
@@ -114,6 +128,7 @@ const Home = ({ user, isGuest }) => {
       fontSize: 24,
       fontWeight: 'bold',
       marginLeft: 10,
+      
     },
     text: {
       fontSize: 18,
@@ -123,6 +138,7 @@ const Home = ({ user, isGuest }) => {
       fontSize: 24,
       fontWeight: 'bold',
       marginVertical: 20,
+      color: '#4A4A4A'
     },
     moodCard: {
       backgroundColor: '#FFF',
@@ -150,6 +166,7 @@ const Home = ({ user, isGuest }) => {
     moodContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      marginBottom:60,
     },
     moodButton: {
       padding: 15,
@@ -189,7 +206,7 @@ const Home = ({ user, isGuest }) => {
       borderRadius: 10,
       width: '48%',
       marginBottom: 10,
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       shadowColor: '#000',
       shadowOpacity: 0.1,
       shadowOffset: { width: 0, height: 2 },
@@ -197,9 +214,12 @@ const Home = ({ user, isGuest }) => {
       elevation: 2,
     },
     toolButtonText: {
-      color: '#000',
+      color: '#4A4A4A',
       fontSize: 16,
-      marginLeft: 5,
+      marginLeft: 10,
+      paddingLeft:3,
+      textAlign:'center',
+      alignSelf:'center'
     },
   });
 

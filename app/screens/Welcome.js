@@ -22,7 +22,7 @@ const Welcome = ({ navigation, setUser, setIsGuest }) => {
                 source={require('../assets/logo.png')} 
                 style={{width: 150, height: 150, position:'absolute', top: 100}}
             />
-            <Text style={styles.text}>Welcome</Text>
+            <Text style={styles.text}>SupportSpace</Text>
             <SafeAreaView style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SignUp')}>
                     <Text style={styles.buttonText}>Sign Up</Text>
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     text:{
-        fontSize:25, 
+        fontSize:30, 
         color:'#D8B4E2', 
         fontFamily:'Helvetica', 
         fontWeight:'bold',
@@ -67,7 +67,12 @@ const styles = StyleSheet.create({
         width:250,
         padding:10,
         borderRadius:20,
-        marginVertical:20
+        marginVertical:20,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 5,
+        elevation: 3,
     },
     buttonText:{
         fontSize:20, 
@@ -84,6 +89,11 @@ const styles = StyleSheet.create({
         padding:10,
         borderRadius:30,
         marginVertical:20,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 5,
+        elevation: 3,
     },
     buttonTextGuest:{
         fontSize:20, 

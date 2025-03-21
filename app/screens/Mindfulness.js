@@ -19,6 +19,7 @@ const Mindfulness = () => {
       },
     };
 
+    //QUOTES API FROM https://www.allthingsdev.co/apimarketplace/endpoints/affirmations-api/663a12de46f11d9ed5b0de3e
     try {
       const response = await fetch('https://affirmations.dev', requestOptions);
       const data = await response.json();
@@ -189,6 +190,7 @@ const styles = StyleSheet.create({
     paddingTop:100,
     paddingLeft: 20, 
     paddingRight: 20, 
+    color: '#4A4A4A', 
   },
   sectionTitle2: {
     fontSize: 24,
@@ -197,6 +199,7 @@ const styles = StyleSheet.create({
     paddingTop:20,
     paddingLeft: 20, 
     paddingRight: 20, 
+    color: '#4A4A4A', 
   },
   apiText: {
     fontSize: 28,
@@ -224,16 +227,28 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: "white", 
+    padding: 20, 
+    borderRadius: 10, 
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
+    margin: 10,
+
   },
   taskIcon: {
     marginRight: 20,
   },
   taskContent: {
     flex: 1,
+    
   },
   taskTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#4A4A4A', 
   },
   taskDescription: {
     fontSize: 14,

@@ -92,37 +92,29 @@ export const saveJournalEntry = async (title, entry, date, time) => {
     export const updateJournalEntry = async (id, title, entry, date, time) => {
       const auth = getAuth();
       const user = auth.currentUser;
-
+    
       if (!user) {
-        console.error('No user is logged in');
+        console.error("No user is logged in");
+        return;
+      }    
+      const userId = user.uid;
+      const db = await setupDatabase(); 
+      if (!db) {
+        console.error("Database is not initialized!");
         return;
       }
-
-      const userId = user.uid;
-      const db = await setupDatabase();
-      if (!db) return;
-
-        try {
-          await db.transactionAsync(async (tx) => {
-            await tx.executeSql(
-              'UPDATE journal_entries SET title = ?, entry = ?, date = ?, time = ? WHERE id = ? AND userId = ?',
-                [title, entry, date, time, id, userId],
-                (tx, results) => {
-                    if (results.rowsAffected > 0) {
-                        console.log('Entry updated successfully');
-                    } else {
-                        console.error('Failed to update the entry');
-                    }
-                }
-            );
-        });
-          console.log("Journal entry updated successfully.");
-        } catch (error) {
-          console.error("Error updating journal entry:", error);
-        }
+    
+      try {
+        await db.runAsync(
+          "UPDATE journal_entries SET title = ?, entry = ?, date = ?, time = ? WHERE id = ? AND userId = ?",
+          [title, entry, date, time, id, userId]
+        );
+        console.log("Entry updated successfully!");
+      } catch (error) {
+        console.error("Error updating journal entry:", error);
       }
-      
-
+    };
+    
   export const deleteJournalEntry = async (id) => {
     const auth = getAuth();
     const user = auth.currentUser;

@@ -42,7 +42,7 @@ const SignUp = ({ navigation, setUser }) => {
     return (
         <ImageBackground source={require('../assets/bg.png')} style={styles.backgroundImage}>
             <ScrollView contentContainerStyle={styles.container}>
-            <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.goBack()} style={styles.backButton} />
+            <Entypo name="chevron-left" size={24} color="black" onPress={() => navigation.navigate('Welcome')} style={styles.backButton} />
                 <View>
                     <Text style={styles.signUp}>Sign Up</Text>
                     <View style={styles.inputContainer}>
@@ -128,6 +128,11 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginBottom: 20,
         marginVertical: 16,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 5,
+        elevation: 3,
     },
     buttonSignup:{
         fontSize:16, 
@@ -135,6 +140,7 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         color: '#4A4A4A',
         textAlign: 'center',
+        
     },
     bottomContainer: {
         marginTop: 16,
@@ -152,6 +158,11 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         width: 250,
         paddingHorizontal: 10,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 5,
+        elevation: 3,
     },
     icon: {
         marginRight: 10,

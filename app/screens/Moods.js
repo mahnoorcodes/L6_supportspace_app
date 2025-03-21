@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useRoute} from 'react';
 import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
@@ -42,6 +42,7 @@ const Moods = ({mood}) => {
           const history = data.map((item, index) => ({
             mood: item.mood,
             date: item.date,
+            icon: item.icon,
             id: item.id ? item.id.toString() : index.toString(),  // Ensure id is a string
         }));
         setMoodHistory(history);

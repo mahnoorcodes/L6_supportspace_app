@@ -137,3 +137,48 @@ export const saveJournalEntry = async (title, entry, date, time) => {
   };
   
   
+  export const startMicRecording = async () => {
+    // Start speech recognition (you might need to use a package like `expo-speech` or `react-native-voice`)
+    const audioUrl = "your_audio_url_or_base64"; // Get your audio URL here or base64
+    const language = "en-US"; // Set the language you need (example: 'fr-FR' for French)
+  
+    const myHeaders = new Headers();
+    myHeaders.append("x-apihub-key", "yaA23SgGkcidePIT5yaX8IVU4baVTSVRYqZpk5oyv77Co73QLg");
+    myHeaders.append("x-apihub-host", "AI-Transcription-Speech-To-Text.allthingsdev.co");
+    myHeaders.append("x-apihub-endpoint", "16ddfb89-e88e-4f1e-bbd4-0734e6fbbb75");
+    myHeaders.append("Content-Type", "application/json");
+  
+    const raw = JSON.stringify({
+      audioUrl,
+      language,
+      audioBase64: "" // You can add base64 encoded audio if needed
+    });
+  
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+  
+    try {
+      const response = await fetch(
+        "https://AI-Transcription-Speech-To-Text.proxy-production.allthingsdev.co/api/rapidapi/speechtotext",
+        requestOptions
+      );
+      const result = await response.json();
+      console.log("Transcription result:", result);
+  
+      // Assuming `result.text` contains the transcribed text from the API response
+      const transcribedText = result.text || '';
+  
+      // Save the transcribed text in the database as a journal entry
+      const currentDate = new Date().toISOString().split('T')[0]; // Get current date in 'YYYY-MM-DD' format
+      const currentTime = new Date().toISOString().split('T')[1].split('.')[0]; // Get current time in 'HH:MM:SS' format
+      await saveJournalEntry('Speech Entry', transcribedText, currentDate, currentTime);
+      Alert.alert("Transcription saved successfully!");
+    } catch (error) {
+      console.error("Error during speech-to-text conversion:", error);
+      Alert.alert("Error during speech-to-text conversion");
+    }
+  };

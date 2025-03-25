@@ -76,7 +76,7 @@ const Moods = ({mood}) => {
         </SafeAreaView>
 
         <Text style={styles.sectionTitle}>Your Mood History </Text>
-        <SafeAreaView style={styles.moodHistory}>
+        <SafeAreaView >
           {moodHistory.length === 0 ? (
           <Text style={{padding:10, textAlign:'center', backgroundColor:"white", color: '#4A4A4A'}}>No mood history found</Text>
         ) : (
@@ -84,9 +84,9 @@ const Moods = ({mood}) => {
           data={moodHistory}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={{ padding: 10, backgroundColor:'white' }}>
-              <Text style={{ fontSize: 16 }}>Mood: {item.mood}</Text>
-              <Text style={{ color: "gray" }}>Date: {item.date}</Text>
+            <View style={styles.card}>
+              <Text style={styles.moodTitle}>Mood: {item.mood}</Text>
+              <Text style={styles.dateTitle}>Date: {item.date}</Text>
             </View>
           )}/>    
         )}
@@ -133,17 +133,7 @@ const styles = StyleSheet.create({
     paddingRight: 20, 
     color: '#4A4A4A', 
   },
-  moodHistory:{
-    backgroundColor: "white", 
-    padding: 20, 
-    borderRadius: 10, 
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 5,
-    elevation: 3,
-    margin: 10,
-  },
+
   moodContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -173,7 +163,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   historyItem: {
-    backgroundColor: "#FFF",
     padding: 15,
     marginBottom: 10,
     borderRadius: 10,
@@ -199,6 +188,27 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,
+  },
+  card: {
+    backgroundColor: 'white',
+    margin: 10,
+    padding: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  moodTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4A4A4A',
+  },
+  dateTitle: {
+    fontSize: 14,
+    color: 'gray',
+    marginTop: 5,
   },
 });
 

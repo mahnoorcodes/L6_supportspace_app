@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView , Alert} from 'react-native';
 import { Ionicons,Entypo } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { saveJournalEntry, setupDatabase , updateJournalEntry, deleteJournalEntry} from '../JournalDatabase';
+import { saveJournalEntry, setupDatabase , updateJournalEntry, deleteJournalEntry, startMicRecording} from '../JournalDatabase';
 
 const NewJournalEntry = () => {
   const navigation = useNavigation();
@@ -10,9 +10,10 @@ const NewJournalEntry = () => {
   const [entry, setEntry] = useState(existingEntry ? existingEntry.entry : '');  
   const [date, setDate] = useState(existingEntry?.date || '');
   const [time, setTime] = useState(existingEntry?.time || '');
-
   const route = useRoute();
   const { existingEntry, refreshEntries } = route.params || {}; 
+
+  //permanent code
   useEffect(() => {
     if (existingEntry) {
       console.log('Existing Entry:', existingEntry);  
@@ -83,7 +84,6 @@ const NewJournalEntry = () => {
       return () => clearInterval(interval); 
     }
   }, [existingEntry]); 
-  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -115,7 +115,7 @@ const NewJournalEntry = () => {
           onChangeText={setEntry}
           multiline
         />
-        <TouchableOpacity style={styles.micButton}>
+        <TouchableOpacity style={styles.micButton} >
           <Ionicons name="mic-outline" size={24} color="black" />
         </TouchableOpacity>
       </SafeAreaView>
@@ -145,9 +145,8 @@ const NewJournalEntry = () => {
       }}>
 
   <Text style={styles.twoButtonsText}>Delete All Data</Text>
-  
-</TouchableOpacity>
-    </SafeAreaView>
+  </TouchableOpacity>
+</SafeAreaView>
   );
 };
 

@@ -20,6 +20,8 @@
     "@react-navigation/stack": "^7.1.1",
     "expo": "~52.0.38",
     "expo-linear-gradient": "~14.0.2",
+    "expo-speech": "~13.0.1",
+    "expo-speech-recognition": "^1.1.1",
     "expo-sqlite": "~15.1.2",
     "expo-status-bar": "~2.0.1",
     "firebase": "^11.4.0",
@@ -31,14 +33,15 @@
     "react-native-screens": "~4.4.0",
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-voice": "^0.3.0"
+    "react-native-voice": "^0.3.0",
+    "expo-av": "~15.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@react-native-community/cli": "latest",
+    "@types/react": "~18.3.12",
     "prettier": "3.5.3",
-    "typescript": "^5.3.3",
-    "@types/react": "~18.3.12"
+    "typescript": "^5.3.3"
   },
   "private": true
 }

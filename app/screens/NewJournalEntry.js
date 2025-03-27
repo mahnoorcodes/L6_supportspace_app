@@ -2,162 +2,34 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Audio } from 'expo-av';  // Importing expo-av to use for audio recording
-import * as FileSystem from 'expo-file-system'; // Import FileSystem
+import { saveJournalEntry, setupDatabase , updateJournalEntry, deleteJournalEntry} from '../JournalDatabase';
+
 const NewJournalEntry = () => {
   const navigation = useNavigation();
   const [title, setTitle] = useState(existingEntry ? existingEntry.title : '');
   const [entry, setEntry] = useState(existingEntry ? existingEntry.entry : '');
   const [date, setDate] = useState(existingEntry?.date || '');
   const [time, setTime] = useState(existingEntry?.time || '');
-  const [isRecording, setIsRecording] = useState(false);
-  const [recording, setRecording] = useState(null);
   const route = useRoute();
-  const { existingEntry, refreshEntries } = route.params || {};
+  const { existingEntry, refreshEntries } = route.params || {}; 
 
-  const audio = useRef(new Audio.Sound());  // Reference to hold the audio object
-
-  // Handle microphone recording
-  const handleRecord = async () => {
-    try {
-      if (isRecording) {
-        await stopRecording();
-      } else {
-        await startRecording();
-      }
-    } catch (error) {
-      console.error("Error during recording:", error);
-      Alert.alert("Error", "There was an issue with the recording.");
+  //permanent code
+  useEffect(() => {
+    if (existingEntry) {
+      console.log('Existing Entry:', existingEntry);  
+      setTitle(existingEntry.title);
+      setEntry(existingEntry.entry);
+      setDate(existingEntry.date);
+      setTime(existingEntry.time);
     }
-  };
+  }, [existingEntry]);
 
-  // Start recording function
-  const startRecording = async () => {
-    try {
-      // Request microphone permissions
-      const permission = await Audio.requestPermissionsAsync();
-      if (!permission.granted) {
-        Alert.alert("Permission Denied", "You need to grant microphone access.");
-        return;
-      }
-  
-      // Stop any existing recording before starting a new one
-      if (recording) {
-        console.log("Stopping existing recording before starting a new one...");
-        await recording.stopAndUnloadAsync();
-        setRecording(null);
-      }
-  
-      // Create a new recording instance
-      const newRecording = new Audio.Recording();
-  
-      // Prepare recording options
-      const recordingOptions = {
-        android: {
-          extension: ".m4a",
-          outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-          audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
-          sampleRate: 44100,
-          numberOfChannels: 2,
-          bitRate: 128000,
-        },
-        ios: {
-          extension: ".m4a",
-          outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_MPEG4AAC,
-          audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
-          sampleRate: 44100,
-          numberOfChannels: 2,
-          bitRate: 128000,
-        },
-      };
-  
-      // Prepare and start recording
-      await newRecording.prepareToRecordAsync(recordingOptions);
-      await newRecording.startAsync();
-  
-      // Update state
-      setRecording(newRecording);
-      setIsRecording(true);
-  
-      console.log('Recording started');
-    } catch (error) {
-      console.error("Error starting recording:", error);
-      Alert.alert("Error", "Failed to start recording.");
-    }
-  };
-  
-
-  // Stop recording function and send the audio to the API
-  const stopRecording = async () => {
-    try {
-      if (!recording) return;
-  
-      console.log("Stopping recording...");
-      await recording.stopAndUnloadAsync();
-      setIsRecording(false);
-  
-      const uri = recording.getURI();
-      setRecording(null);  // Reset state
-  
-      sendToSpeechAPI(uri);
-      console.log("Recorded file URI:", uri);
-
-    } catch (error) {
-      console.error("Error stopping recording:", error);
-      Alert.alert("Error", "There was an issue stopping the recording.");
-    }
-  };
-  
-  // Send the audio to the Speech-to-Text API
-  const sendToSpeechAPI = async (audioUri) => {
-    try {
-      if (!audioUri) {
-        Alert.alert("Error", "No audio file found.");
-        return;
-      }
-  
-      // Read file as Base64
-      const base64Audio = await FileSystem.readAsStringAsync(audioUri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-  
-      const myHeaders = new Headers();
-      myHeaders.append("x-apihub-key", "yaA23SgGkcidePIT5yaX8IVU4baVTSVRYqZpk5oyv77Co73QLg");
-      myHeaders.append("x-apihub-host", "AI-Transcription-Speech-To-Text.allthingsdev.co");
-      myHeaders.append("x-apihub-endpoint", "16ddfb89-e88e-4f1e-bbd4-0734e6fbbb75");
-      myHeaders.append("Content-Type", "application/json");
-  
-      const raw = JSON.stringify({
-        audioBase64: base64Audio, // ✅ Send Base64 encoded audio
-        language: "en-US"
-      });
-  
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-        redirect: "follow"
-      };
-  
-      const apiResponse = await fetch(
-        "https://AI-Transcription-Speech-To-Text.proxy-production.allthingsdev.co/api/rapidapi/speechtotext", 
-        requestOptions,
-      );
-  
-      const result = await apiResponse.json();
-      
-      console.log("API Response:", result);
-  
-      if (result && result.transcription) {
-        setEntry(result.transcription); // ✅ Set transcribed text as journal entry
-      } else {
-        Alert.alert("Error", "Failed to transcribe speech. API did not return a transcription.");
-      }
-    } catch (error) {
-      console.error("Error with Speech-to-Text API:", error);
-      Alert.alert("Error", "There was an issue with transcription.");
-    }
-  };
+  useEffect(() => {
+    setupDatabase();
+    const currentDate = new Date();
+    setDate(currentDate.toLocaleDateString('en-GB'));
+    setTime(currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+  }, []);
 
   // Save the journal entry
   const handleSave = async () => {
@@ -186,6 +58,33 @@ const NewJournalEntry = () => {
       console.error("Error saving journal entry:", error);
     }
   };
+
+  useEffect(() => {
+    if (existingEntry) {
+      setDate(existingEntry.date); 
+      setTime(existingEntry.time); 
+    } else {
+      const updateDateTime = () => {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        });
+        const formattedTime = now.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+  
+        setDate(formattedDate);
+        setTime(formattedTime);
+      };
+  
+      updateDateTime(); 
+      const interval = setInterval(updateDateTime, 1000);  
+      return () => clearInterval(interval); 
+    }
+  }, [existingEntry]); 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -217,15 +116,37 @@ const NewJournalEntry = () => {
           onChangeText={setEntry}
           multiline
         />
-        <TouchableOpacity style={styles.micButton} onPress={handleRecord}>
-          <Ionicons name={isRecording ? "mic" : "mic-outline"} size={24} color="black" />
+        <TouchableOpacity style={styles.micButton} >
+          <Ionicons name="mic" size={24} color="black" />
         </TouchableOpacity>
       </SafeAreaView>
 
       <TouchableOpacity style={styles.twoButtons} onPress={handleSave}>
         <Text style={styles.twoButtonsText}>Save</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+
+      <TouchableOpacity style={styles.twoButtons} onPress={() => {
+        Alert.alert("Delete Entry","Are you sure you want to delete this entry?",[
+            {text: "Cancel",style: "cancel"},
+            { text: "Yes", onPress: async () => {
+              try {
+                if (existingEntry) {
+                  await deleteJournalEntry(existingEntry.id); 
+                }
+                setTitle('');setEntry('');setDate('');setTime('');
+                Alert.alert("Success", "Entry deleted."); 
+                navigation.navigate("HomeTabs", { screen: "Journal" })
+              } catch (error) {
+                Alert.alert("Error", "There was an issue deleting the entry.");
+                console.error("Error deleting journal entry:", error);
+              }
+            }
+          }
+        ]);
+      }}>
+      <Text style={styles.twoButtonsText}>Delete All Data</Text>
+    </TouchableOpacity>
+  </SafeAreaView>
   );
 };
 

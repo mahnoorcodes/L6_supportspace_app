@@ -67,7 +67,7 @@ export const getMoodHistory = async () => {
       console.log("Executing SQL Query for user:", userId);
   
       const result = await dbInstance.getAllAsync(
-        `SELECT mood, date FROM moods WHERE userId = ? ORDER BY id DESC;`,
+        `SELECT mood, date, icon FROM moods WHERE userId = ? ORDER BY id DESC;`,
         [userId]
     );    
       console.log("Mood history fetched:", result);

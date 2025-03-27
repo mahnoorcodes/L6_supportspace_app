@@ -1,16 +1,47 @@
-import React, { useEffect, useState, useRoute} from 'react';
-import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useState,} from 'react';
+import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { auth} from '../config/firebaseConfig'; 
 import { onAuthStateChanged, getAuth } from 'firebase/auth'; 
 import { addMoodToDB, getMoodHistory } from '../MoodsDatabase'; 
 
+const moodTasks = {
+  happy: [
+    "Take a walk outside",
+    "Practice deep breathing",
+    "Listen to upbeat music",
+    "Call a friend"
+  ],
+  sad: [
+    "Try a gratitude journal",
+    "Do some physical exercise",
+    "Eat your favourite foods",
+    "Watch a funny movie",
+    "Talk to a loved one",
+    "Do something creative like drawing"
+  ],
+  neutral: [
+    "Organize your workspace",
+    "Take a short walk",
+    "Read a book",
+    "Try meditating for 5 minutes"
+  ],
+  angry: [
+    "Do some physical exercise",
+    "Practice breathing exercises",
+    "Write down your thoughts",
+    "Listen to calming music"
+  ]
+};
+
 const Moods = ({mood}) => {
+  const route = useRoute();
   const navigation = useNavigation();
   const [moodHistory, setMoodHistory] = useState([]);
   const [user, setUser] = useState(null); 
+  const [selectedMood, setSelectedMood] = useState(route.params?.mood || null);  
 
     useEffect(() => {
       console.log("Mood History Updated:", moodHistory);
@@ -43,7 +74,7 @@ const Moods = ({mood}) => {
             mood: item.mood,
             date: item.date,
             icon: item.icon,
-            id: item.id ? item.id.toString() : index.toString(),  // Ensure id is a string
+            id: item.id ? item.id.toString() : index.toString(),  
         }));
         setMoodHistory(history);
         } else {
@@ -58,6 +89,24 @@ const Moods = ({mood}) => {
     useEffect(() => {
       fetchMoodHistory();
     }, []);
+
+// Show alert with random task for selected mood
+const handleMoodSelect = (mood) => {
+  const tasksForMood = moodTasks[mood] || [];
+  if (tasksForMood.length > 0) {
+    const randomTask = tasksForMood[Math.floor(Math.random() * tasksForMood.length)];
+    Alert.alert(`If you're feeling ${mood}`, `${randomTask}`);
+  } else {
+    Alert.alert(`No tasks found for ${mood} mood`);
+  }
+};
+
+useEffect(() => {
+  if (selectedMood) {
+    const mood = selectedMood.label.toLowerCase();  
+    handleMoodSelect(mood);  
+  }
+}, [selectedMood]);  
 
   return (
     <LinearGradient
@@ -83,11 +132,18 @@ const Moods = ({mood}) => {
           <FlatList
           data={moodHistory}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
+          renderItem={({ item }) => ( 
+            <View style={[styles.card, {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
               <Text style={styles.moodTitle}>Mood: {item.mood}</Text>
               <Text style={styles.dateTitle}>Date: {item.date}</Text>
-            </View>
+
+              {item.icon && typeof item.icon === "string" ? (
+                <FontAwesome5 name={item.icon} size={24} color="black"/>
+              ) : (
+                // default icon if item.icon is undefined
+                <FontAwesome5 name="smile" size={24} color="black"/>
+              )}
+            </View> 
           )}/>    
         )}
         </SafeAreaView>

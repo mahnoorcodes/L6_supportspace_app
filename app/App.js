@@ -29,6 +29,7 @@ const App = () => {
         setIsGuest(false);
       } else {
         setUser(null);
+        setIsGuest(true);
       }
     });
     return () => unsubscribe();

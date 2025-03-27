@@ -1,54 +1,88 @@
 import React from 'react';
-import { View, Text, FlatList, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRoute } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Audio } from 'expo-av';
 
 const tracks = [
   {
     id: '1',
     title: 'Rainforest Sounds',
-    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    url: require('../assets/sounds/rainforest.mp3'), //https://www.youtube.com/watch?v=Uv7AHRSX08c&ab_channel=RelaxingNatureSounds
   },
   {
     id: '2',
-    title: 'Deep Breathing Guide',
-    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    title: 'Waterfall Sounds',
+    url: require('../assets/sounds/waterfall.mp3'),
   },
   {
     id: '3',
+    title: 'Mindfulness Meditation',
+    url: require('../assets/sounds/mindfulnessmeditation.mp3'), //https://www.youtube.com/watch?v=ZToicYcHIOU&ab_channel=Calm
+  },
+  {
+    id: '4',
     title: 'Ocean Waves',
-    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+    url: require('../assets/sounds/oceanwaves.mp3'), //https://www.youtube.com/watch?v=mxXV7pKD3nk&ab_channel=EpidemicAmbience
+  },
+  {
+    id: '5',
+    title: 'Calm Rain',
+    url: require('../assets/sounds/calmrain.mp3'), //https://www.youtube.com/watch?v=HbVYuPogyP0
+  },
+  {
+    id: '6',
+    title: 'Relaxing Piano',
+    url: require('../assets/sounds/relaxingpiano.mp3'), //https://www.youtube.com/watch?v=t6chiIXXAxg&ab_channel=Wawa
   },
 ];
 
-const Meditate = () => {
+const Meditate = ({user, isGuest}) => {
   const navigation = useNavigation();
   const [sound, setSound] = useState(null);
   const [currentTrack, setCurrentTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  //timer
+  const [timeRemaining, setTimeRemaining] = useState(0); 
+  const [timerInterval, setTimerInterval] = useState(null); 
+  const [isTimePlaying, setIsTimePlaying] = useState(false); 
+  const [selectedTime, setSelectedTime] = useState(null); 
 
   async function playSound(track) {
-    if (sound) {
-      await sound.unloadAsync(); // Stop current track
+    if (!user && isGuest) {
+      Alert.alert("Login Required", "You need to log in to play sounds!");
+      return; 
+    }
+
+    console.log(`Playing track: ${track.title}`);
+    setIsLoading(true);
+
+    if (sound && currentTrack.title !== track.title) {
+      await sound.stopAsync(); // Stop current track
+      await sound.unloadAsync();
     }
 
     const { sound: newSound } = await Audio.Sound.createAsync(
-      { uri: track.url },
+      track.url,
       { shouldPlay: true }
     );
     setSound(newSound);
     setCurrentTrack(track);
     setIsPlaying(true);
+    setIsLoading(false);
 
     newSound.setOnPlaybackStatusUpdate(status => {
       if (status.didJustFinish) {
+        console.log(`Track finished: ${track.title}`);
         setIsPlaying(false);
       }
     });
+    console.log(`Track started: ${track.title}`);
   }
 
   const playPauseToggle = async () => {
@@ -56,9 +90,11 @@ const Meditate = () => {
       const status = await sound.getStatusAsync();
       if (status.isPlaying) {
         await sound.pauseAsync();
+        console.log(`Track paused: ${currentTrack.title}`);
         setIsPlaying(false);
       } else {
         await sound.playAsync();
+        console.log(`Track resumed: ${currentTrack.title}`);
         setIsPlaying(true);
       }
     }
@@ -67,37 +103,98 @@ const Meditate = () => {
   const skipToPrevious = async () => {
     const currentIndex = tracks.findIndex((t) => t.title === currentTrack.title);
     if (currentIndex > 0) {
-      playSound(tracks[currentIndex - 1]);
+      const playSound = tracks[currentIndex - 1];
+      console.log(`Skipping to previous track: ${prevTrack.title}`); 
+      playSound(prevTrack);
     }
   };
   
   const skipToNext = async () => {
     const currentIndex = tracks.findIndex((t) => t.title === currentTrack.title);
-    if (currentIndex < tracks.length - 1) {
-      playSound(tracks[currentIndex + 1]);
-    }
+    const nextIndex = currentIndex < tracks.length - 1 ? currentIndex + 1 : 0;
+    const nextTrack = tracks[nextIndex];
+    console.log(`Skipping to next track: ${nextTrack.title}`); 
+    playSound(nextTrack);   
   };
   
   const renderTrackItem = ({ item }) => (
     <TouchableOpacity
       key={item.id}
       style={styles.trackButton}
-      onPress={() => playSound(item)}
-    >
+      onPress={() => playSound(item)}>
       <Text>{item.title}</Text>
     </TouchableOpacity>
   );
   
-useEffect(() => {
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        if (sound) {
+          sound.stopAsync();  
+          sound.unloadAsync(); 
+          setSound(null); 
+          setIsPlaying(false);
+          console.log("Track Ended as Screen exited");
+        }
+      };
+    }, [sound]),
+  );
+  
+
+  useEffect(() => {
     return sound ? () => sound.unloadAsync() : undefined;
   }, [sound]);
 
+//timer
+  const startTimer = (time) => {
+    if (selectedTime > 0) {
+      setIsTimePlaying(true);
+      setTimeRemaining(time);
+
+      const interval = setInterval(() => {
+        setTimeRemaining((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(interval);
+            setIsTimePlaying(false);
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+
+      setTimerInterval(interval);
+    }
+  };
+
+  const handleTimeButtonPress = (timeInMinutes) => {
+    const timeInSeconds = timeInMinutes * 60;
+    setSelectedTime(timeInSeconds);
+    startTimer(timeInSeconds);  
+  };
+
+  const pauseTimer = () => {
+    clearInterval(timerInterval);
+    setIsTimePlaying(false);
+  };
+
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerInterval) clearInterval(timerInterval); 
+    };
+  }, [timerInterval]);
+
   return (
     <LinearGradient
-              colors={['lightyellow', '#B5FFFC','pink','#FFCB77']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.container}>
+      colors={['lightyellow', '#B5FFFC','pink','#FFCB77']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}>
 
     <SafeAreaView style={styles.container}>
       <SafeAreaView style={styles.headerContainer}>
@@ -110,7 +207,7 @@ useEffect(() => {
 
       <Text style={styles.sectionTitle}>Sound Player</Text>
       <SafeAreaView style={styles.playerContainer}>
-        <View style={styles.controlsContainer}>
+        <SafeAreaView style={styles.controlsContainer}>
           <TouchableOpacity style={styles.controlButton} onPress={skipToPrevious}>
             <FontAwesome5 name="backward" style={styles.controlIcon} />
           </TouchableOpacity>
@@ -120,18 +217,49 @@ useEffect(() => {
           <TouchableOpacity style={styles.controlButton} onPress={skipToNext}>
             <FontAwesome5 name="forward" style={styles.controlIcon} />
           </TouchableOpacity>
-        </View>
-        <View style={styles.progressBar} />
-            <FlatList
+        </SafeAreaView>
+        <SafeAreaView style={styles.progressBar} />
+
+          <FlatList
             data={tracks}
             keyExtractor={(item) => item.id} 
             renderItem={renderTrackItem} 
             style={styles.trackList}
           />
-          {currentTrack && <Text>Now Playing: {currentTrack.title}</Text>}
+          {isLoading ? (
+              <Text>Loading sound...</Text>
+          ) : (
+              currentTrack && <Text>Now Playing: {currentTrack.title}</Text>
+          )}
+      </SafeAreaView>
 
+      <SafeAreaView style={styles.playerContainer}>
+        <Text style={styles.headerText}>Meditation Timer</Text>
+        <SafeAreaView style={styles.timeButtons}>
+          <TouchableOpacity onPress={() => handleTimeButtonPress(5)} style={styles.timeButton}>
+            <Text style={styles.timeButtonText}>5 Mins</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleTimeButtonPress(10)} style={styles.timeButton}>
+            <Text style={styles.timeButtonText}>10 Mins</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleTimeButtonPress(15)} style={styles.timeButton}>
+            <Text style={styles.timeButtonText}>15 Mins</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+
+        <SafeAreaView style={styles.timerContainer}>
+        <TouchableOpacity
+          style={styles.controlButton}
+          onPress={isTimePlaying ? pauseTimer : startTimer}>
+          <FontAwesome5 name={isTimePlaying ? 'pause' : 'play'} style={styles.controlIcon} />
+        </TouchableOpacity>
+        
+        <SafeAreaView style={styles.timerContainer}>
+          <Text style={styles.timerText}>{formatTime(timeRemaining)}</Text>
+        </SafeAreaView>
       </SafeAreaView>
     </SafeAreaView>
+  </SafeAreaView>
   </LinearGradient>
 
   );
@@ -140,10 +268,6 @@ useEffect(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  playerContainer: {
-    flex: 1,
-    padding: 20,
   },
   header: {
     fontSize: 24,
@@ -165,6 +289,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF', 
     zIndex: 100, 
   },
+  playerContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    margin: 10,
+    marginVertical: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  timerContainer: {
+    flexDirection: 'row',  
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    paddingHorizontal: 20,
+  },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -177,18 +319,7 @@ const styles = StyleSheet.create({
     paddingRight: 20, 
     color: '#4A4A4A', 
   },
- playerContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    padding: 20,
-    marginVertical: 10,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 5,
-  },
+
   nowPlaying: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -213,6 +344,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     marginTop: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   controlButton: {
     padding: 15,
@@ -228,20 +364,51 @@ const styles = StyleSheet.create({
   trackButton: {
     backgroundColor: '#E6ECF0',
     paddingVertical: 12,
-    paddingHorizontal: 15,
+    paddingHorizontal: 40,
     borderRadius: 10,
-    width: '90%',
+    width: '100%',
     alignItems: 'center',
-    marginVertical: 5,
+    marginVertical: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   trackButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
   },
-  trackList: {
-    marginBottom: 20,
+  trackList: { 
+    marginBottom: 5,
   },
+  timeButtons: {
+    flexDirection: 'row',  
+    justifyContent: 'space-evenly',  
+    alignItems: 'center',  
+    width: '100%',  
+    marginBottom: 10,  
+  },
+  timeButton: {
+    width: 70,  
+    height: 70,  
+    backgroundColor: 'lightblue',  
+    borderRadius: 35,  
+    justifyContent: 'center',  
+    alignItems: 'center',  
+    marginTop:10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  timeButtonText: {
+    fontSize: 12,
+    color: '#000',
+  },
+  
 });
 
 export default Meditate;

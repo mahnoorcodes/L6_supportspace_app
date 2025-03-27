@@ -85,7 +85,7 @@ const AppNavigator = () => {
         </Stack.Screen>
 
         {/* Main App Screens with Bottom Tabs */}
-        <Stack.Screen name="HomeTabs">
+          <Stack.Screen name="HomeTabs">
             {(props) => <HomeTabs {...props} user={user} isGuest={isGuest} />}
           </Stack.Screen>
           <Stack.Screen name="Journal" >
@@ -94,12 +94,13 @@ const AppNavigator = () => {
 
         {/* Additional Screens */}
 
-        <Stack.Screen name="Meditate" component={Meditate} />
+        <Stack.Screen name="Meditate">
+          {(props) => <Meditate {...props} user={user} isGuest={isGuest} />}
+        </Stack.Screen>
         <Stack.Screen name="Mindfulness" component={Mindfulness} />
         <Stack.Screen name="Moods" component={Moods} />
-        <Stack.Screen name="NewJournalEntry" component={NewJournalEntry} />
-
-        </Stack.Navigator>
+        <Stack.Screen name="NewJournalEntry" component={NewJournalEntry}/>
+      </Stack.Navigator>
   );
 };
 

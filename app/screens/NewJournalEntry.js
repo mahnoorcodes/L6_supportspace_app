@@ -4,7 +4,7 @@ import { Ionicons, Entypo } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { saveJournalEntry, setupDatabase , updateJournalEntry, deleteJournalEntry} from '../JournalDatabase';
 
-const NewJournalEntry = () => {
+const NewJournalEntry = ({}) => {
   const navigation = useNavigation();
   const [title, setTitle] = useState(existingEntry ? existingEntry.title : '');
   const [entry, setEntry] = useState(existingEntry ? existingEntry.entry : '');
@@ -37,7 +37,6 @@ const NewJournalEntry = () => {
       Alert.alert("Error", "Title and entry cannot be empty.");
       return;
     }
-
     navigation.navigate("HomeTabs", { screen: "Journal" });
 
     try {

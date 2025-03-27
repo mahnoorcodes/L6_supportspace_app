@@ -24,7 +24,7 @@ const Home = ({ user, isGuest }) => {
       navigation.navigate("Moods", { mood });
     } else {
       console.log("User not logged in.");
-      Alert.alert("Log in to save your moods!");
+      Alert.alert("Login Required", "You need to log in to save your moods!");
     }
   };
 

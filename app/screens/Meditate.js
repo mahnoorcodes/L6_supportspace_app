@@ -12,32 +12,32 @@ const tracks = [
   {
     id: '1',
     title: 'Rainforest Sounds',
-    url: require('../assets/sounds/rainforest.mp3'), //https://www.youtube.com/watch?v=Uv7AHRSX08c&ab_channel=RelaxingNatureSounds
+    url: require('../sounds/rainforest.mp3'), //https://www.youtube.com/watch?v=Uv7AHRSX08c&ab_channel=RelaxingNatureSounds
   },
   {
     id: '2',
     title: 'Waterfall Sounds',
-    url: require('../assets/sounds/waterfall.mp3'),
+    url: require('../sounds/waterfall.mp3'),
   },
   {
     id: '3',
     title: 'Mindfulness Meditation',
-    url: require('../assets/sounds/mindfulnessmeditation.mp3'), //https://www.youtube.com/watch?v=ZToicYcHIOU&ab_channel=Calm
+    url: require('../sounds/mindfulnessmeditation.mp3'), //https://www.youtube.com/watch?v=ZToicYcHIOU&ab_channel=Calm
   },
   {
     id: '4',
     title: 'Ocean Waves',
-    url: require('../assets/sounds/oceanwaves.mp3'), //https://www.youtube.com/watch?v=mxXV7pKD3nk&ab_channel=EpidemicAmbience
+    url: require('../sounds/oceanwaves.mp3'), //https://www.youtube.com/watch?v=mxXV7pKD3nk&ab_channel=EpidemicAmbience
   },
   {
     id: '5',
     title: 'Calm Rain',
-    url: require('../assets/sounds/calmrain.mp3'), //https://www.youtube.com/watch?v=HbVYuPogyP0
+    url: require('../sounds/calmrain.mp3'), //https://www.youtube.com/watch?v=HbVYuPogyP0
   },
   {
     id: '6',
     title: 'Relaxing Piano',
-    url: require('../assets/sounds/relaxingpiano.mp3'), //https://www.youtube.com/watch?v=t6chiIXXAxg&ab_channel=Wawa
+    url: require('../sounds/relaxingpiano.mp3'), //https://www.youtube.com/watch?v=t6chiIXXAxg&ab_channel=Wawa
   },
 ];
 

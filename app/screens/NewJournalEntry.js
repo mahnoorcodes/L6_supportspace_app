@@ -115,9 +115,7 @@ const NewJournalEntry = ({}) => {
           onChangeText={setEntry}
           multiline
         />
-        <TouchableOpacity style={styles.micButton} >
-          <Ionicons name="mic" size={24} color="black" />
-        </TouchableOpacity>
+
       </SafeAreaView>
 
       <TouchableOpacity style={styles.twoButtons} onPress={handleSave}>

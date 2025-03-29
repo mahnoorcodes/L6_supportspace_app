@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginVertical: 20,
+    marginVertical: 20 ,
     color: '#4A4A4A',
   },  
   headerContainer: {

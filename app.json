@@ -37,6 +37,12 @@
         "projectId": "67cc986b-245f-46e0-9d12-cff225af8fce"
       }
     },
-    "owner": "mahnoor-code"
+    "owner": "mahnoor-code",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/67cc986b-245f-46e0-9d12-cff225af8fce"
+    }
   }
 }

@@ -12,3 +12,6 @@ Entypo, Font Awesome 5, and React Native Material icons used.
 
 ## Download Expo Go and test it out:
 https://expo.dev/preview/update?message=Initial%20release&updateRuntimeVersion=1.0.0&createdAt=2025-03-31T12%3A54%3A54.390Z&slug=exp&projectId=67cc986b-245f-46e0-9d12-cff225af8fce&group=71000740-10dc-41f5-932b-2cd1d1285931
+
+## Read My Full SupportSpace Project Report Here:
+https://docs.google.com/document/d/1zuN36RHM04JwQciHU7eAfts9vcIw7lhYpKEuGQHnIU8/edit?usp=sharing

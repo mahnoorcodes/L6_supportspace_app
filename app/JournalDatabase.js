@@ -137,7 +137,7 @@ export const saveJournalEntry = async (title, entry, date, time) => {
   };
   
   
-  export const startMicRecording = async () => {
+  /*export const startMicRecording = async () => {
     // Start speech recognition (you might need to use a package like `expo-speech` or `react-native-voice`)
     const audioUrl = "your_audio_url_or_base64"; // Get your audio URL here or base64
     const language = "en-US"; // Set the language you need (example: 'fr-FR' for French)
@@ -181,4 +181,4 @@ export const saveJournalEntry = async (title, entry, date, time) => {
       console.error("Error during speech-to-text conversion:", error);
       Alert.alert("Error during speech-to-text conversion");
     }
-  };
+  }; */
